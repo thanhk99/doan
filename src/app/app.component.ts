@@ -1,12 +1,21 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { WebsocketService } from './service/socket.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
 })
-export class AppComponent {
-  title = 'fe';
+export class AppComponent implements OnInit {
+  message: string = '';
+
+  constructor(private websocketService: WebsocketService) {}
+
+  ngOnInit(): void {
+    console.log("run")
+
+  }
+
+  // sendMessage(): void {
+  //   this.websocketService.sendMessage('Hello Server!');
+  // }
 }

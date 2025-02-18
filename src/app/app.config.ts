@@ -1,9 +1,11 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 
-import { routes } from './app.routes';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-
-export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideClientHydration(withEventReplay())]
+const config: SocketIoConfig = { 
+  url: 'http://localhost:8082/client-info', 
+  options: { transports: ['websocket'], upgrade: true } 
 };
+
+export const appConfig: ApplicationConfig = { 
+  providers: [importProvidersFrom(SocketIoModule.forRoot(config))] 
+};   
