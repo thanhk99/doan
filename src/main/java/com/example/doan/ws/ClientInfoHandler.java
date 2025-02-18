@@ -4,22 +4,29 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+
+import com.example.doan.Controller.gameController;
+
 import org.springframework.web.socket.TextMessage;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ClientInfoHandler extends TextWebSocketHandler {
-
+    private static gameController gameController=new gameController();
     private List<WebSocketSession> sessions = Collections.synchronizedList(new ArrayList<>());
     private int countdown = 10;
     private Timer timer;
+    private boolean isRecived = true;
+    private HashMap<String ,String > GuessClient= new HashMap<>();
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.add(session);
-        String clientInfo = "Client connected: " + session.getRemoteAddress();
+        String clientInfo = "Client connected: " + session.getId();
         session.sendMessage(new TextMessage(clientInfo));
         System.out.println(clientInfo);
         if (timer == null) {
@@ -30,18 +37,26 @@ public class ClientInfoHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         sessions.remove(session);
-        System.out.println("Client disconnected: " + session.getRemoteAddress());
+        System.out.println("Client disconnected: " + session.getId());
 
     }
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        System.out.println(session.getRemoteAddress()+" send : " + message.getPayload());
-        for (WebSocketSession i : sessions) {
-
+        if (isRecived){
+            String clientID=session.getId();
+            String clientGuess = (String)message.getPayload();
+            GuessClient.put(clientID, clientGuess);
+            System.out.println(session.getRemoteAddress()+" send : " + message.getPayload());
+        }
+        else{
+            String TempMsg= "Quá hạn";
+            session.sendMessage(new TextMessage(TempMsg));
         }
     }
-    private void startCountdown() {
+    private void startCountdown() throws IOException {
+        GuessClient.clear();
         timer = new Timer();
+        isRecived =true;
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -49,7 +64,13 @@ public class ClientInfoHandler extends TextWebSocketHandler {
                     sendMessageToAll("Countdown: " + countdown);
                     countdown--;
                 } else {
-                    sendMessageToAll("Kết thúc!"); // In "Kết thúc"
+                    isRecived=false;
+                    sendMessageToAll("Kết thúc!"); 
+                    try {
+                        ShowRs();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     timer.cancel();
                     timer.purge();
     
@@ -58,9 +79,13 @@ public class ClientInfoHandler extends TextWebSocketHandler {
                         @Override
                         public void run() {
                             countdown = 10;
-                            startCountdown();
+                            try {
+                                startCountdown();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }, 3000); // Chờ 3 giây
+                    }, 3000); 
                 }
             }
         }, 0, 1000);
@@ -74,6 +99,20 @@ public class ClientInfoHandler extends TextWebSocketHandler {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+    public void ShowRs() throws IOException{
+        int result=gameController.result();
+        sendMessageToAll("kết quả là : "  +result);
+        for (WebSocketSession i:sessions){
+            String clientId=i.getId();
+            if (GuessClient.get(clientId) !=null){
+                int tempRs=Integer.parseInt(GuessClient.get(clientId));
+                if (tempRs == result){
+                    String tempMsg="Chức mừng bạn";
+                    i.sendMessage(new TextMessage(tempMsg));
+                } 
             }
         }
     }
