@@ -1,21 +1,27 @@
 import { Component, OnInit } from '@angular/core';
-import { WebsocketService } from './service/socket.service';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
+  template: `<h1>{{ message }}</h1>`,
 })
 export class AppComponent implements OnInit {
-  message: string = '';
+  message: string | undefined;
 
-  constructor(private websocketService: WebsocketService) {}
+  private webSocket: WebSocket | undefined;
 
-  ngOnInit(): void {
-    console.log("run")
+  ngOnInit() {
+    this.webSocket = new WebSocket('ws://localhost:8082/client-info');
 
+    this.webSocket.onmessage = (event) => {
+      this.message = event.data;
+    };
+
+    this.webSocket.onopen = () => {
+      console.log('Kết nối thành công!');
+    };
+
+    this.webSocket.onclose = () => {
+      console.log('Kết nối đã đóng!');
+    };
   }
-
-  // sendMessage(): void {
-  //   this.websocketService.sendMessage('Hello Server!');
-  // }
 }
