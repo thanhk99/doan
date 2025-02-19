@@ -26,7 +26,7 @@ public class ClientInfoHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.add(session);
-        String clientInfo = "Client connected: " + session.getId();
+        String clientInfo = "Client connected: " + session.getRemoteAddress();
         session.sendMessage(new TextMessage(clientInfo));
         System.out.println(clientInfo);
         if (timer == null) {
@@ -37,7 +37,7 @@ public class ClientInfoHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         sessions.remove(session);
-        System.out.println("Client disconnected: " + session.getId());
+        System.out.println("Client disconnected: " + session.getRemoteAddress());
 
     }
     @Override
