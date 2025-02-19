@@ -5,23 +5,23 @@ import { Component, OnInit } from '@angular/core';
   template: `<h1>{{ message }}</h1>`,
 })
 export class AppComponent implements OnInit {
-  message: string | undefined;
-
-  private webSocket: WebSocket | undefined;
+  message: string = 'Chưa có dữ liệu';
+  private webSocket !: WebSocket;
 
   ngOnInit() {
     this.webSocket = new WebSocket('ws://localhost:8082/client-info');
 
     this.webSocket.onmessage = (event) => {
-      this.message = event.data;
+      try {
+        const data = JSON.parse(event.data); // Xử lý JSON
+        this.message = data.message;
+      } catch (e) {
+        this.message = event.data; // Xử lý plain text
+      }
     };
 
-    this.webSocket.onopen = () => {
-      console.log('Kết nối thành công!');
-    };
-
-    this.webSocket.onclose = () => {
-      console.log('Kết nối đã đóng!');
+    this.webSocket.onerror = (error) => {
+      console.error('Lỗi WebSocket:', error);
     };
   }
 }
