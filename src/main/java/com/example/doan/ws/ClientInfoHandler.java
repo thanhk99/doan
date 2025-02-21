@@ -104,7 +104,7 @@ public class ClientInfoHandler extends TextWebSocketHandler {
     }
     public void ShowRs() throws IOException{
         int result=gameController.result();
-        sendMessageToAll("kết quả là : "  +result);
+        sendMessageToAll("kết quả là : "  +Integer.toString(result));
         for (WebSocketSession i:sessions){
             String clientId=i.getId();
             if (GuessClient.get(clientId) !=null){
