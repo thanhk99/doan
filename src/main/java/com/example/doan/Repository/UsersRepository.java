@@ -8,6 +8,4 @@ import com.example.doan.Model.users;
 public interface UsersRepository extends JpaRepository<users, Integer> {
 
     Optional<users> findByTk(String tk);
-
-    
 }

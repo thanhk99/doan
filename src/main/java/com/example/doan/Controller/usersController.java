@@ -23,7 +23,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid; 
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("user")
 public class usersController {
     public usersController(){}
     @Autowired
@@ -36,23 +36,30 @@ public class usersController {
             orElse( ResponseEntity.notFound().build());
         }
     
-        @PostMapping("/login")
-        public ResponseEntity<?> login
-            (@Valid @RequestBody users loginRequest,
-            HttpServletRequest httpRequest,
-            HttpSession session,
-            HttpServletResponse response) {
-            Optional <users> user = usersRepository.findByTk(loginRequest.getTk());
-            if(user.isPresent() && user.get().getMk().equals(loginRequest.getMk())) {
-                session.setAttribute("username", user.get().getFullname());
-                fullname = user.get().getFullname();
-                System.out.println(session.getAttribute("username"));
-                return ResponseEntity.ok(user.get().getFullname());
-            }
+    @PostMapping("/login")
+    public ResponseEntity<?> login
+        (@Valid @RequestBody users loginRequest,
+        HttpServletRequest httpRequest,
+        HttpSession session,
+        HttpServletResponse response) {
+        Optional <users> user = usersRepository.findByTk(loginRequest.getTk());
+        if(user.isPresent() && user.get().getMk().equals(loginRequest.getMk())) {
+            session.setAttribute("username", user.get().getFullname());
+            fullname = user.get().getFullname();
+            System.out.println(session.getAttribute("username"));
+            return ResponseEntity.ok(user.get().getFullname());
+        }
         else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai tài khoản hoặc mật khẩu");
         }
     }
+    @PostMapping("/regis") // Đăng ký
+    public String postMethodName(@RequestBody String entity) {
+        //TODO: process POST request
+        
+        return entity;
+    }
+    
     public String getFullname() {
         return fullname;
     }

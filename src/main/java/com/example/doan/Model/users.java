@@ -17,7 +17,7 @@ public class users {
     private String fullname;
     private String email;
     public users() {}
-    public users(int id, String tk, String mk, String fullname, String email, String roles , Time dateRegis){
+    public users(int id, String tk, String mk, String fullname, String email){
         this.id = id;
         this.tk = tk;
         this.mk = mk;
