@@ -2,7 +2,9 @@ package com.example.doan.Controller;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.doan.Model.friend;
 import com.example.doan.Model.users;
 import com.example.doan.Repository.UsersRepository;
+import com.example.doan.Repository.friendRepository;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -25,9 +31,12 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("user")
 public class usersController {
+    HttpServletRequest request;
     public usersController(){}
     @Autowired
     private UsersRepository usersRepository;
+    @Autowired
+    private friendRepository friendRepository;
     private static String fullname = "";
         @GetMapping()
         public ResponseEntity<users> getUsersById() {
@@ -39,15 +48,18 @@ public class usersController {
     @PostMapping("/login") // Đăng nhập
     public ResponseEntity<?> login
         (@Valid @RequestBody users loginRequest,
-        HttpServletRequest httpRequest,
-        HttpSession session,
         HttpServletResponse response) {
         Optional <users> user = usersRepository.findByTk(loginRequest.getTk());
+        System.out.println(loginRequest.getTk());
         if(user.isPresent() && user.get().getMk().equals(loginRequest.getMk())) {
-            session.setAttribute("username", user.get().getFullname());
+            Cookie cookieId = new Cookie("id", String.valueOf(user.get().getId()));
+            cookieId.setMaxAge(60 * 60 * 24 * 7);
             fullname = user.get().getFullname();
-            System.out.println(session.getAttribute("username"));
-            return ResponseEntity.ok(user.get().getFullname());
+            response.addCookie(cookieId);
+            Map<String, Object> responseBody = new HashMap<>();
+            responseBody.put("id", user.get().getId());
+            responseBody.put("fullname", user.get().getFullname());
+            return ResponseEntity.ok(responseBody);
         }
         else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai tài khoản hoặc mật khẩu");
@@ -68,26 +80,42 @@ public class usersController {
             return ResponseEntity.ok("Đăng ký thành công");
         }
     }
-    @PostMapping("/info") // Thông tin người dùng sau khi đăng nhập
-    public ResponseEntity<?> info
-        (@Valid @RequestBody users infoRequest,
-        HttpServletRequest httpRequest,
-        HttpSession session,
-        HttpServletResponse response) {
-        Optional <users> user = usersRepository.findByTk(infoRequest.getTk());
-        if(user.isPresent() && user.get().getMk().equals(infoRequest.getMk())) {
+    @GetMapping("/info") 
+    public ResponseEntity<?> GetInfo (HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookieId = request.getCookies();
+        String idString ="";
+        System.out.println(cookieId);
+        if (cookieId != null) {
+            for (Cookie cookie : cookieId) {
+                if (cookie.getName().equals("id")) {
+                    idString= cookie.getValue();
+                }
+            }
+        }
+
+        if(idString !="") {
+            int IdUser= Integer.parseInt(idString);
+            Optional <users> user = usersRepository.findById(IdUser);
             return ResponseEntity.ok(user.get());
         }
         else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai tài khoản hoặc mật khẩu");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Không tìm thấy");
         }
     }
-    public String postMethodName(@RequestBody String entity) {
-        //TODO: process POST request
-        
-        return entity;
+    @PostMapping("/search")
+    public ResponseEntity<?> searchUser (@RequestBody users request) {
+        List<users> users = usersRepository.findByTkContaining(request.getTk());
+        if (!users.isEmpty()) {
+            return ResponseEntity.ok(users);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy");
+        }
     }
-    
+    @PostMapping("/addFriend")
+    public ResponseEntity<?> addFriend (@RequestBody friend request) {
+        friendRepository.save(request);
+        return ResponseEntity.ok("Đã thêm bạn bè");
+    }
     public String getFullname() {
         return fullname;
     }

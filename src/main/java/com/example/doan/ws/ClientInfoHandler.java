@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 public class ClientInfoHandler extends TextWebSocketHandler {
     HttpSession httpSession ;
+    HttpServletRequest request;
     private static gameController gameController=new gameController();
     private List<WebSocketSession> sessions = Collections.synchronizedList(new ArrayList<>());
     private int countdown = 10;
