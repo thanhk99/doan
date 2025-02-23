@@ -7,7 +7,7 @@ create table users(
     fullname text,
     email text
 );
-insert into users(tk,mk,fullname,email,roles) values 
+insert into users(tk,mk,fullname,email) values 
 ('thanhdz','1','Phạm Như Thành','thanhit482004@gmail.com'),
 ('thanhcute','1','Nguyễn Văn Thiệu','thieucho@gmail.com'),
 ('thanh','1','Hạ Hầu Đôn','downmonkey@gmail.com'),
@@ -74,19 +74,19 @@ create table historybalance(
 );
 #insert into historybalance value()
 
-create table mission(
- id int primary key auto_increment,
- request float ,
- award float ,
- statu text 
-);
-insert into mission(request,award,statu) values
-(1000,100),
-(5000,500),
-(20000,1000),
-(50000,2000),
-(100000,5000),
-(200000,10000);
+-- create table mission(
+--  id int primary key auto_increment,
+--  request float ,
+--  award float ,
+--  statu text 
+-- );
+-- insert into mission(request,award,statu) values
+-- (1000,100),
+-- (5000,500),
+-- (20000,1000),
+-- (50000,2000),
+-- (100000,5000),
+-- (200000,10000);
 
 create table recive(
 	id int primary key auto_increment,
@@ -111,4 +111,13 @@ create table historyBuy (
 	id int primary key auto_increment,
     idstore int ,
     datebuy date
+);
+
+create table friend(
+	id int primary key auto_increment,
+    id_my int ,
+    id_friend int ,
+    relative char(50),
+    foreign key (id_my) references users(id),
+    foreign key (id_friend) references users(id)
 );
