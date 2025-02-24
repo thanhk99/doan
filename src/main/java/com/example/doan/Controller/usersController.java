@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.doan.Model.friend;
 import com.example.doan.Model.users;
+import com.example.doan.Model.atm;
 import com.example.doan.Repository.UsersRepository;
 import com.example.doan.Repository.friendRepository;
+import com.example.doan.Repository.atmRepository;
+
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +40,8 @@ public class usersController {
     private UsersRepository usersRepository;
     @Autowired
     private friendRepository friendRepository;
+    @Autowired
+    private atmRepository atmRepository;
     private static String fullname = "";
         @GetMapping()
         public ResponseEntity<users> getUsersById() {
@@ -116,6 +121,18 @@ public class usersController {
         friendRepository.save(request);
         return ResponseEntity.ok("Đã thêm bạn bè");
     }
+    // @PostMapping("/atm")
+    // public ResponseEntity<?> atm (@RequestBody atm request){
+    //     Optional <atm> atm = atmRepository.findById((int) request.getId());
+    //         return null;
+
+    // }
+    public String postMethodName(@RequestBody String entity) {
+        //TODO: process POST request
+        
+        return entity;
+    }
+    
     public String getFullname() {
         return fullname;
     }
