@@ -16,26 +16,39 @@ import java.sql.Time;
 import java.time.*;
 @Entity
 public class atm {
-    @Column(name = "id_player")
-    private int idplayer;
-    private float debt;
-    private float deposit;
-    private float balance;
-    private float borrowed;
+    @Id
+    @Column(name = "idplayer")
+    private Integer idPlayer; 
+
+    @Column(name = "debt")
+    private Float debt;
+
+    @Column(name = "deposit")
+    private Float deposit;
+
+    @Column(name = "balance")
+    private Float balance;
+
+    @Column(name = "borrowed")
+    private Float borrowed;
+
+    @ManyToOne
+    @JoinColumn(name = "idplayer", insertable = false, updatable = false)
+    private users user; 
 
     public atm() {}
     public atm(int idPlayer , float debt , float deposit , float balance , float borrowed){
-        this.idplayer = idPlayer;
+        this.idPlayer = idPlayer;
         this.debt = debt;
         this.deposit = deposit;
         this.balance = balance;
         this.borrowed = borrowed;
     }
     public long getId(){
-        return idplayer;
+        return idPlayer;
     }
     public void setIdPlayer(int idPlayer){
-        this.idplayer = idPlayer;
+        this.idPlayer = idPlayer;
     }
     public float getDebt(){
         return debt;
@@ -60,10 +73,5 @@ public class atm {
     }
     public void setBorrowed(float borrowed){
         this.borrowed = borrowed;
-    }
-
-
-
-
-    
+    }   
 }
