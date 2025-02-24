@@ -121,13 +121,17 @@ public class usersController {
         friendRepository.save(request);
         return ResponseEntity.ok("Đã thêm bạn bè");
     }
-    // @PostMapping("/atm")
-    // public ResponseEntity<?> atm (@RequestBody atm request){
-    //     Optional <atm> atm = atmRepository.findById((int) request.getId());
-    //         return null;
-
-    // }
-    public String postMethodName(@RequestBody String entity) {
+    @PostMapping("/atm")    //Lấy ra tất cả thông tin về tiền của người dùng
+    public ResponseEntity<?> getAtm (@RequestBody atm request){
+    }
+    @PostMapping("/addBalan") // cộng tiền ở số dư của người dùng
+    public String addBalance(@RequestBody String entity) {
+        //TODO: process POST request
+        
+        return entity;
+    }
+    @PostMapping("/minusBalan") // trừ tiền ở số dư của người dùng
+    public String minusBalan(@RequestBody String entity) {
         //TODO: process POST request
         
         return entity;
