@@ -8,4 +8,5 @@ import com.example.doan.Model.atm;
 
 @Repository
 public interface atmRepository extends JpaRepository<atm, Integer> {
+    Optional<atm> findByIdPlayer(long idPlayer);
 }

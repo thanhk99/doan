@@ -19,6 +19,8 @@ import com.example.doan.Model.users;
 import com.example.doan.Model.atm;
 import com.example.doan.Repository.UsersRepository;
 import com.example.doan.Repository.friendRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.doan.Repository.atmRepository;
 
 
@@ -38,8 +40,6 @@ public class usersController {
     public usersController(){}
     @Autowired
     private UsersRepository usersRepository;
-    @Autowired
-    private friendRepository friendRepository;
     @Autowired
     private atmRepository atmRepository;
     private static String fullname = "";
@@ -97,6 +97,7 @@ public class usersController {
                 }
             }
         }
+        
 
         if(idString !="") {
             int IdUser= Integer.parseInt(idString);
@@ -116,26 +117,74 @@ public class usersController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy");
         }
     }
-    @PostMapping("/addFriend")
-    public ResponseEntity<?> addFriend (@RequestBody friend request) {
-        friendRepository.save(request);
-        return ResponseEntity.ok("Đã thêm bạn bè");
-    }
+
     @PostMapping("/atm")    //Lấy ra tất cả thông tin về tiền của người dùng
     public ResponseEntity<?> getAtm (@RequestBody atm request){
+        Optional<atm> atmInfo = atmRepository.findByIdPlayer(request.getIdPlayer());
+        if (atmInfo.isPresent()) {
+            return ResponseEntity.ok(atmInfo.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy thông tin ATM");
+        }
     }
     @PostMapping("/addBalan") // cộng tiền ở số dư của người dùng
-    public String addBalance(@RequestBody String entity) {
+    public ResponseEntity<?> addBalance(@RequestBody atm entity) {
         //TODO: process POST request
-        
-        return entity;
-    }
+        try {
+            Optional<atm> atmInfo = atmRepository.findByIdPlayer(entity.getIdPlayer());
+            if (atmInfo.isPresent()) {
+                atm atm = atmInfo.get();
+                float balance = atm.getBalance();
+                int idPlayer = atm.getIdPlayer();
+    
+                if (balance <= 0) {
+                    return ResponseEntity.badRequest().body("Dữ liệu không hợp lệ: idPlayer hoặc balance bị thiếu hoặc không hợp lệ.");
+                }
+    
+                atm.setBalance(atm.getBalance() + entity.getBalance());
+                atmRepository.save(atm);
+                return ResponseEntity.ok("Đã cộng " + entity.getBalance() + " vào tài khoản");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy người chơi với ID: " + entity.getIdPlayer());
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lỗi xử lý yêu cầu: " + e.getMessage());
+        }
+                    
+                    
+}
+               
+            
     @PostMapping("/minusBalan") // trừ tiền ở số dư của người dùng
-    public String minusBalan(@RequestBody String entity) {
+    public ResponseEntity<?> minusBalan(@RequestBody atm entity) {
         //TODO: process POST request
+        try {
+            Optional<atm> atmInfo = atmRepository.findByIdPlayer(entity.getIdPlayer());
+            if (atmInfo.isPresent()) {
+                atm atm = atmInfo.get();
+                float balance = atm.getBalance();
+                int idPlayer = atm.getIdPlayer();
+    
+                if (balance < 0) {
+                    return ResponseEntity.badRequest().body("Dữ liệu không hợp lệ: idPlayer hoặc balance bị thiếu hoặc không hợp lệ.");
+                }
+    
+                if (atm.getBalance() < entity.getBalance()) {
+                    return ResponseEntity.badRequest().body("Số dư không đủ để thực hiện giao dịch.");
+                }
+
+                atm.setBalance(atm.getBalance() - entity.getBalance());
+                atmRepository.save(atm);
+                return ResponseEntity.ok("Đã trừ " + entity.getBalance() + " vào tài khoản");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy người chơi với ID: " + entity.getIdPlayer());
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lỗi xử lý yêu cầu: " + e.getMessage());
+        }
         
-        return entity;
     }
+
     
     public String getFullname() {
         return fullname;
