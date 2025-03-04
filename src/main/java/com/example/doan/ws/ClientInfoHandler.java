@@ -12,6 +12,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.example.doan.Controller.gameController;
 import com.example.doan.Controller.usersController;
 import com.example.doan.Model.users;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,6 +40,8 @@ public class ClientInfoHandler extends TextWebSocketHandler {
     private Timer timer;
     private boolean isRecived = true;
     private HashMap<String ,String > GuessClient= new HashMap<>();
+    private HashMap<String ,String > MoneyClient= new HashMap<>();
+    private ObjectMapper ojMapper = new ObjectMapper(); 
     private static users u = new users();
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -74,10 +77,13 @@ public class ClientInfoHandler extends TextWebSocketHandler {
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         String username = (String) session.getAttributes().get("username");
         if (isRecived){
-            String clientID=username;
-            String clientGuess = (String)message.getPayload();
-            GuessClient.put(clientID, clientGuess);
-            System.out.println(username+" send : " + message.getPayload());
+            String payload = (String) message.getPayload();
+            Map<String, Object> data = ojMapper.readValue(payload, Map.class);
+            String clientID = username;
+            String clientOpt = (String) data.get("opt"); 
+            Integer clientMoney = (Integer) data.get("money");
+            GuessClient.put(clientID, clientOpt);
+            MoneyClient.put(clientID, clientMoney.toString());
         }
         else{
             String TempMsg= "Quá hạn";
@@ -92,9 +98,9 @@ public class ClientInfoHandler extends TextWebSocketHandler {
             @Override
             public void run() {
                 if (countdown >= 0) {
-                    sendMessageToAll("Countdown: " + countdown);
                     countdown--;
-                } else {
+                } 
+                else {
                     isRecived=false;
                     sendMessageToAll("Kết thúc!"); 
                     try {
@@ -117,6 +123,7 @@ public class ClientInfoHandler extends TextWebSocketHandler {
                             }
                         }
                     }, 3000); 
+                    sendMessageToAll("Bắt đầu");
                 }
             }
         }, 0, 1000);
@@ -134,14 +141,22 @@ public class ClientInfoHandler extends TextWebSocketHandler {
         }
     }
     public void ShowRs() throws IOException{
-        int result=gameController.result();
-        sendMessageToAll("kết quả là : "  +Integer.toString(result));
+        int resultInt=gameController.result();
+        String result= "";
+        if(resultInt%2==0){
+            sendMessageToAll("kết quả là : "  +Integer.toString(resultInt) + "->Chẵn");
+            result ="Chẵn";
+        }
+        else{
+            sendMessageToAll("kết quả là : "  +Integer.toString(resultInt) +" -> Lẻ");
+            result="Lẻ";
+        }
         for (WebSocketSession i:sessions){
             String clientId = (String) i.getAttributes().get("username");
             if (GuessClient.get(clientId) !=null){
-                int tempRs=Integer.parseInt(GuessClient.get(clientId));
-                if (tempRs == result){
-                    String tempMsg="Chức mừng bạn" +clientId;
+                System.out.println(GuessClient.get(clientId)+MoneyClient.get(clientId));
+                if (GuessClient.get(clientId).equals(result)){
+                    String tempMsg="Chức mừng bạn " +clientId +"nhận được : " +MoneyClient.get(clientId)+" điểm";
                     i.sendMessage(new TextMessage(tempMsg));
                 } 
             }
