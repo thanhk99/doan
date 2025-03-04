@@ -44,7 +44,7 @@ public class atm {
         this.balance = balance;
         this.borrowed = borrowed;
     }
-    public long getId(){
+    public int getIdPlayer(){
         return idPlayer;
     }
     public void setIdPlayer(int idPlayer){
@@ -73,5 +73,9 @@ public class atm {
     }
     public void setBorrowed(float borrowed){
         this.borrowed = borrowed;
+    }
+    public atm get() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'get'");
     }   
 }
