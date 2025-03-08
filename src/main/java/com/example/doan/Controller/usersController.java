@@ -51,9 +51,7 @@ public class usersController {
         }
     
     @PostMapping("/login") // Đăng nhập
-    public ResponseEntity<?> login
-        (@Valid @RequestBody users loginRequest,
-        HttpServletResponse response) {
+    public ResponseEntity<?> login(@Valid @RequestBody users loginRequest,HttpServletResponse response) {
         Optional <users> user = usersRepository.findByTk(loginRequest.getTk());
         System.out.println(loginRequest.getTk());
         if(user.isPresent() && user.get().getMk().equals(loginRequest.getMk())) {
@@ -64,6 +62,8 @@ public class usersController {
             Map<String, Object> responseBody = new HashMap<>();
             responseBody.put("id", user.get().getId());
             responseBody.put("fullname", user.get().getFullname());
+            Optional<atm> atmInfo = atmRepository.findByIdPlayer(user.get().getId());
+            responseBody.put("balance", atmInfo.get().getBalance());
             return ResponseEntity.ok(responseBody);
         }
         else {
@@ -97,8 +97,6 @@ public class usersController {
                 }
             }
         }
-        
-
         if(idString !="") {
             int IdUser= Integer.parseInt(idString);
             Optional <users> user = usersRepository.findById(IdUser);
@@ -129,7 +127,6 @@ public class usersController {
     }
     @PostMapping("/addBalan") // cộng tiền ở số dư của người dùng
     public ResponseEntity<?> addBalance(@RequestBody atm entity) {
-        //TODO: process POST request
         try {
             Optional<atm> atmInfo = atmRepository.findByIdPlayer(entity.getIdPlayer());
             if (atmInfo.isPresent()) {
@@ -157,7 +154,6 @@ public class usersController {
             
     @PostMapping("/minusBalan") // trừ tiền ở số dư của người dùng
     public ResponseEntity<?> minusBalan(@RequestBody atm entity) {
-        //TODO: process POST request
         try {
             Optional<atm> atmInfo = atmRepository.findByIdPlayer(entity.getIdPlayer());
             if (atmInfo.isPresent()) {

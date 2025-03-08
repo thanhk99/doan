@@ -75,7 +75,6 @@ public class atm {
         this.borrowed = borrowed;
     }
     public atm get() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'get'");
     }   
 }
