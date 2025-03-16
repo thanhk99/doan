@@ -18,12 +18,13 @@ import java.util.Timer;
     import org.springframework.web.socket.handler.TextWebSocketHandler;
 
     import com.example.doan.Controller.gameController;
-    import com.fasterxml.jackson.databind.JsonNode;
+import com.example.doan.Repository.atmRepository;
+import com.fasterxml.jackson.databind.JsonNode;
     import com.fasterxml.jackson.databind.ObjectMapper;
 
     import jakarta.annotation.PostConstruct;
 
-    @Component
+@Component
     public class GameCLHandler extends TextWebSocketHandler {
 
         private List<WebSocketSession> sessions = Collections.synchronizedList(new ArrayList<>());
@@ -62,23 +63,40 @@ import java.util.Timer;
             
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode= objectMapper.readTree(msg);
+            String type= jsonNode.get("type").asText();
 
+            if(type.equals("sumbet")){
+                handleBetMsg(jsonNode);
+            }
+            else if(type.equals("bet")){
+                handleChoiceMsg(jsonNode, username);
+            }
+
+
+        }
+
+        private void handleBetMsg(JsonNode jsonNode) throws Exception{
+
+        }
+        private void handleChoiceMsg(JsonNode jsonNode,String username) throws Exception{
             String choice =jsonNode.get("choice").asText();
-            int money = jsonNode.get("bet").asInt();
-
-            if(choice.equals('l')){
+            int money = jsonNode.get("money").asInt();
+            if(choice.equals("cuoc_le")){
                 totalMoneyL+=money;
             }
             else{
                 totalMoneyC+=money;
             }
-            sendMessageToAll(choice);
             GuessClient.put(username, choice);
             MoneyClient.put(username, money);
-
             System.out.println(username+" : " + choice +"->" + money);
         }
-
+        private void sendTotalMoney() throws IOException{
+            String totalMoney="money"+totalMoneyC+":"+totalMoneyL;
+            for (WebSocketSession session : sessions) {
+                session.sendMessage(new TextMessage(totalMoney));
+            }
+        }
         private void startCountdown() throws IOException {
             GuessClient.clear();
             timer = new Timer();
@@ -89,6 +107,12 @@ import java.util.Timer;
                 public void run() {
                     
                     if (countdown >= 0) {
+                        try {
+                            sendTotalMoney();
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
                         countdown--;
                     } 
                     else {
