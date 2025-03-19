@@ -1,15 +1,17 @@
     package com.example.doan.ws;
 
     import java.io.IOException;
-    import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
     import java.util.Collections;
     import java.util.HashMap;
     import java.util.List;
-import java.util.PrimitiveIterator;
+import java.util.Random;
 import java.util.Timer;
     import java.util.TimerTask;
 
-    import org.hibernate.annotations.Comment;
+    import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.stereotype.Component;
     import org.springframework.web.socket.CloseStatus;
     import org.springframework.web.socket.TextMessage;
@@ -18,14 +20,21 @@ import java.util.Timer;
     import org.springframework.web.socket.handler.TextWebSocketHandler;
 
     import com.example.doan.Controller.gameController;
-import com.example.doan.Repository.atmRepository;
+    import com.example.doan.Model.sessionGame;
+import com.example.doan.Model.sessionPlayer;
+import com.example.doan.Repository.sessionGameRepo;
+import com.example.doan.Repository.sessionPlayerRepo;
 import com.fasterxml.jackson.databind.JsonNode;
     import com.fasterxml.jackson.databind.ObjectMapper;
-
-    import jakarta.annotation.PostConstruct;
-
 @Component
     public class GameCLHandler extends TextWebSocketHandler {
+
+        private final sessionGameRepo sessionGameRepo;
+        private final sessionPlayerRepo sessionplayerRepo;
+        public GameCLHandler(sessionGameRepo sessionGameRepo,sessionPlayerRepo sessionPlayerRepo ) {
+            this.sessionGameRepo = sessionGameRepo;
+            this.sessionplayerRepo = sessionPlayerRepo;
+        }
 
         private List<WebSocketSession> sessions = Collections.synchronizedList(new ArrayList<>());
         private int countdown = 15;
@@ -37,7 +46,6 @@ import com.fasterxml.jackson.databind.JsonNode;
         private int totalMoneyL=0;
         private HashMap<String ,String > GuessClient= new HashMap<>();
         private HashMap<String ,Integer > MoneyClient= new HashMap<>();
-        private static gameController gameController=new gameController();
 
 
         @Override 
@@ -92,20 +100,27 @@ import com.fasterxml.jackson.databind.JsonNode;
             System.out.println(username+" : " + choice +"->" + money);
         }
         private void sendTotalMoney() throws IOException{
-            String totalMoney="money"+totalMoneyC+":"+totalMoneyL;
-            for (WebSocketSession session : sessions) {
-                session.sendMessage(new TextMessage(totalMoney));
-            }
+            String totalMoney=totalMoneyC+":"+totalMoneyL;
+            convertToJson("money", totalMoney);
+        }
+        private void convertToJson(String type,String message) throws IOException{
+            ObjectMapper objectMapper = new ObjectMapper();
+            HashMap<String, Object> result = new HashMap<>();
+            result.put("type", type);
+            result.put("message", message);
+            String jsonResult = objectMapper.writeValueAsString(result);
+            sendMessageToAll(jsonResult);
         }
         private void startCountdown() throws IOException {
             GuessClient.clear();
+            totalMoneyC =0;
+            totalMoneyL=0;
             timer = new Timer();
             isRecived =true;
-            sendMessageToAll("start");
+            convertToJson("start","");
             timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    
                     if (countdown >= 0) {
                         try {
                             sendTotalMoney();
@@ -117,7 +132,6 @@ import com.fasterxml.jackson.databind.JsonNode;
                     } 
                     else {
                         isRecived=false;
-                        sendMessageToAll("end"); 
                         try {
                             ShowRs();
                         } catch (IOException e) {
@@ -143,24 +157,40 @@ import com.fasterxml.jackson.databind.JsonNode;
             }, 0, 1000);
         }
         public void ShowRs() throws IOException{
-            int resultInt=gameController.result();
+            Random random = new Random();
+            int resultInt = random.nextInt(6);
+            sessionGame sessionGame = new sessionGame();
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String formattedDateTime = currentDateTime.format(formatter);
+            sessionGame.setResult(Integer.toString(resultInt));
+            sessionGame.setTimeoccurs(formattedDateTime);
+            sessionGame.setNamegame("Chẵn lẻ");
+
+            sessionGameRepo.save(sessionGame);
             String result= "";
             if(resultInt%2==0){
-                sendMessageToAll(Integer.toString(resultInt));
-                result ="c";
+                convertToJson("end", Integer.toString(resultInt));
+                result ="cuoc_chan";
             }
             else{
-                sendMessageToAll(Integer.toString(resultInt));
-                result="l";
+                convertToJson("end", Integer.toString(resultInt));
+                result="cuoc_le";
             }
             for (WebSocketSession i:sessions){
                 String clientId = (String) i.getAttributes().get("username");
                 if (GuessClient.get(clientId) !=null){
-                    System.out.println(GuessClient.get(clientId)+MoneyClient.get(clientId));
-                    if (GuessClient.get(clientId).equals(result)){
-                        String tempMsg="Chức mừng bạn " +clientId +"nhận được : " +MoneyClient.get(clientId)+" điểm";
-                        i.sendMessage(new TextMessage(tempMsg));
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    HashMap<String, Object> rsMsg = new HashMap<>();
+                    rsMsg.put("type", "reward");
+                    if (GuessClient.get(clientId).equals(result)){  //Người chơi win
+                        rsMsg.put("message", MoneyClient.get(clientId));
                     } 
+                    else{
+                        rsMsg.put("message",0);
+                    }
+                    String jsonResult = objectMapper.writeValueAsString(rsMsg);
+                    i.sendMessage(new TextMessage(jsonResult));
                 }
             }
         }

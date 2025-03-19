@@ -1,12 +1,7 @@
 package com.example.doan.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import java.util.*;
-import java.sql.Time;
-import java.time.*;
+import jakarta.persistence.*;
+import java.util.List;
 @Entity
 public class users {
     @Id
@@ -16,6 +11,8 @@ public class users {
     private String mk;
     private String fullname;
     private String email;
+    @OneToMany(mappedBy = "playerid")
+    private List<sessionPlayer> sessionPlayers;
     public users() {}
     public users(int id, String tk, String mk, String fullname, String email){
         this.id = id;

@@ -1,7 +1,5 @@
 package com.example.doan.Controller;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,13 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.doan.Model.friend;
 import com.example.doan.Model.users;
 import com.example.doan.Model.atm;
 import com.example.doan.Repository.UsersRepository;
-import com.example.doan.Repository.friendRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.doan.Repository.atmRepository;
 
 
@@ -43,12 +37,12 @@ public class usersController {
     @Autowired
     private atmRepository atmRepository;
     private static String fullname = "";
-        @GetMapping()
-        public ResponseEntity<users> getUsersById() {
-            return usersRepository.findById(1).
-            map(users -> ResponseEntity.ok(users)).
-            orElse( ResponseEntity.notFound().build());
-        }
+    @GetMapping()
+    public ResponseEntity<users> getUsersById() {
+        return usersRepository.findById(1).
+        map(users -> ResponseEntity.ok(users)).
+        orElse( ResponseEntity.notFound().build());
+    }
     
     @PostMapping("/login") // Đăng nhập
     public ResponseEntity<?> login(@Valid @RequestBody users loginRequest,HttpServletResponse response) {
@@ -132,7 +126,6 @@ public class usersController {
             if (atmInfo.isPresent()) {
                 atm atm = atmInfo.get();
                 float balance = atm.getBalance();
-                int idPlayer = atm.getIdPlayer();
     
                 if (balance <= 0) {
                     return ResponseEntity.badRequest().body("Dữ liệu không hợp lệ: idPlayer hoặc balance bị thiếu hoặc không hợp lệ.");
@@ -159,8 +152,6 @@ public class usersController {
             if (atmInfo.isPresent()) {
                 atm atm = atmInfo.get();
                 float balance = atm.getBalance();
-                int idPlayer = atm.getIdPlayer();
-    
                 if (balance < 0) {
                     return ResponseEntity.badRequest().body("Dữ liệu không hợp lệ: idPlayer hoặc balance bị thiếu hoặc không hợp lệ.");
                 }
