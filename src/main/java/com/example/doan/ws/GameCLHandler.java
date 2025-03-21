@@ -158,7 +158,7 @@ import com.fasterxml.jackson.databind.JsonNode;
         }
         public void ShowRs() throws IOException{
             Random random = new Random();
-            int resultInt = random.nextInt(6);
+            int resultInt = random.nextInt(1,6);
             sessionGame sessionGame = new sessionGame();
             LocalDateTime currentDateTime = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -184,11 +184,14 @@ import com.fasterxml.jackson.databind.JsonNode;
                     HashMap<String, Object> rsMsg = new HashMap<>();
                     rsMsg.put("type", "reward");
                     if (GuessClient.get(clientId).equals(result)){  //Người chơi win
-                        rsMsg.put("message", MoneyClient.get(clientId));
+                        rsMsg.put("reward", MoneyClient.get(clientId));
                     } 
                     else{
-                        rsMsg.put("message",0);
+                        rsMsg.put("reward",0);
                     }
+                    rsMsg.put("result", resultInt);
+                    rsMsg.put("bet", MoneyClient.get(clientId));
+                    rsMsg.put("choice",GuessClient.get(clientId));
                     String jsonResult = objectMapper.writeValueAsString(rsMsg);
                     i.sendMessage(new TextMessage(jsonResult));
                 }
