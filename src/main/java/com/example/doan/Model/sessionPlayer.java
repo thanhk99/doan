@@ -14,9 +14,9 @@ public class sessionPlayer {
     @Column(name = "playerid")
     private int playerid;
 
-        @ManyToOne
-        @JoinColumn(name = "playerid" , referencedColumnName = "id",insertable = false, updatable = false )
-        private users player;
+    @ManyToOne
+    @JoinColumn(name = "playerid" , referencedColumnName = "id",insertable = false, updatable = false )
+    private users player;
 
     @Column(name = "timeoccurs")
     private String timeoccurs;
