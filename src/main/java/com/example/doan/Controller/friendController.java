@@ -14,6 +14,7 @@ import com.example.doan.Model.users;
 import com.example.doan.Repository.UsersRepository;
 import com.example.doan.Repository.friendRepository;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -62,10 +63,19 @@ public ResponseEntity<?> acceptFriend(@RequestBody Map<String, Integer> request)
 }
     
 
-    @GetMapping("/getListFriend")
-    public ResponseEntity<?> getListFriend() {
-        return ResponseEntity.ok(friendRepository.findAll());
+@PostMapping("/getListFriend")
+public ResponseEntity<?> getListFriend(@RequestBody friend request) {
+    Integer idMy = request.getIdMy();
+    
+    if (idMy == null) {
+        return ResponseEntity.badRequest().body("ID người dùng không hợp lệ.");
     }
+
+    List<String> friendNames = friendRepository.findFriendNamesByIdMy(idMy);
+    
+    return ResponseEntity.ok(friendNames);
+}
+
 
     @DeleteMapping("/deleteFriend")
 public ResponseEntity<?> deleteFriend(@RequestBody Map<String, Integer> request) {
