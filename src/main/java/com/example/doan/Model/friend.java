@@ -10,6 +10,7 @@ public class friend {
     private int idMy;
     private int idFriend;
     private String relative;
+
     public void setId(int id){
         this.id = id ;
     }
