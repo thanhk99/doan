@@ -97,16 +97,13 @@ public class usersController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy thông tin");
         }
     }
-    @PostMapping("/search")
-    public ResponseEntity<?> searchUser (@RequestBody users request) {
-        List<users> users = usersRepository.findByTkContaining(request.getTk());
+    @PostMapping("/searchFullname")
+    public ResponseEntity<?> searchUserByName (@RequestBody users request) {
+        List<users> users = usersRepository.findByFullnameContaining(request.getFullname());
         if (!users.isEmpty()) {
             return ResponseEntity.ok(users);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy");
         }
-    }
-    public String getFullname() {
-        return fullname;
     }
 }

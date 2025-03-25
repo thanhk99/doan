@@ -9,9 +9,9 @@ public class historyBalance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id ;
 
-    private int playerid;
+    private int idPlayer;
     @ManyToOne 
-    @JoinColumn(name = "playerid",insertable = false,updatable = false)
+    @JoinColumn(name = "idPlayer",insertable = false,updatable = false)
     private users user;
     @Column(name = "timechange")
     private String timeChange;
@@ -19,11 +19,11 @@ public class historyBalance {
     private int trans;
     private int balance;
 
-    public void setPlayerId(int playerid){
-        this.playerid=playerid;
+    public void setPlayerId(int idPlayer){
+        this.idPlayer=idPlayer;
     }
-    public int getPlayerId(){
-        return playerid;
+    public int getIdPlayer(){
+        return idPlayer;
     }
 
     public void setTimeChange(String timeChange){

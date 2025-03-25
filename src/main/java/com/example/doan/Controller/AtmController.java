@@ -70,5 +70,4 @@ public class AtmController {
         Optional<atm>atm=atmRepository.findByStk(entity.getStk());
         return ResponseEntity.ok(atm);
     }
-    
 }
