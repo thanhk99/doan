@@ -75,8 +75,6 @@
             else if(type.equals("bet")){
                 handleChoiceMsg(jsonNode, username);
             }
-
-
         }
 
         private void handleBetMsg(JsonNode jsonNode) throws Exception{

@@ -15,6 +15,7 @@ public class MessageHandler extends TextWebSocketHandler {
     @Override 
     public void afterConnectionEstablished( WebSocketSession session) throws Exception {
         sessions.add(session);
+        String username = (String) session.getAttributes().get("username");
     }
     @Override 
     public void afterConnectionClosed(WebSocketSession session,  CloseStatus status) throws Exception {
@@ -23,6 +24,6 @@ public class MessageHandler extends TextWebSocketHandler {
 
     @Override 
     public void handleMessage(WebSocketSession session,  WebSocketMessage<?> message) throws Exception {
-        
+        String username = (String) session.getAttributes().get("username");
     }
 }
