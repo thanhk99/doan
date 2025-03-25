@@ -8,11 +8,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.doan.Model.users;
+import com.example.doan.Model.JwtUtil;
 import com.example.doan.Model.atm;
 import com.example.doan.Repository.UsersRepository;
 import com.example.doan.Repository.atmRepository;
@@ -37,6 +38,9 @@ public class usersController {
     @Autowired
     private atmRepository atmRepository;
     private static String fullname = "";
+    @Autowired 
+    private JwtUtil jwtUtil;
+    @Autowired 
     @GetMapping()
     public ResponseEntity<users> getUsersById() {
         return usersRepository.findById(1).
@@ -58,6 +62,10 @@ public class usersController {
             responseBody.put("fullname", user.get().getFullname());
             Optional<atm> atmInfo = atmRepository.findByIdPlayer(user.get().getId());
             responseBody.put("balance", atmInfo.get().getBalance());
+
+            //token
+            String token = jwtUtil.generateToken(user.get().getTk());
+            responseBody.put("token", token);
             return ResponseEntity.ok(responseBody);
         }
         else {
@@ -79,25 +87,14 @@ public class usersController {
             return ResponseEntity.ok("Đăng ký thành công");
         }
     }
-    @GetMapping("/info") 
-    public ResponseEntity<?> GetInfo (HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookieId = request.getCookies();
-        String idString ="";
-        System.out.println(cookieId);
-        if (cookieId != null) {
-            for (Cookie cookie : cookieId) {
-                if (cookie.getName().equals("id")) {
-                    idString= cookie.getValue();
-                }
-            }
+    @PostMapping("/info") 
+    public ResponseEntity<?> GetInfo (@RequestBody users reqUsers) {
+        Optional <users> u= usersRepository.findById( reqUsers.getId());
+        if(u.isPresent()){
+            return ResponseEntity.ok(u.get());
         }
-        if(idString !="") {
-            int IdUser= Integer.parseInt(idString);
-            Optional <users> user = usersRepository.findById(IdUser);
-            return ResponseEntity.ok(user.get());
-        }
-        else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Không tìm thấy");
+        else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy thông tin");
         }
     }
     @PostMapping("/search")

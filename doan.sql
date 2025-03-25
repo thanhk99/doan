@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS doan;
 create schema doan;
 use doan;
 create table users(
@@ -17,7 +18,7 @@ insert into users(tk,mk,fullname,email) values
 
 create table listgame(
 	id int primary key auto_increment ,
-    namegame text 
+    namegame char(40) 
 );
 insert into listgame(namegame) values 
 ('Đoán số '),
@@ -27,41 +28,38 @@ insert into listgame(namegame) values
 
 create table sessionplayer(
 	id int primary key auto_increment,
-    gameid int ,
+    namegame char(40) ,
     playerid int ,
-    timeoccurs datetime,
-    result char(10),
-    pointbet float ,
-    pointrc float,
-    bet char(10),
-    foreign key (gameid) references listgame(id),
+    timeoccurs char(50),
+    result char(20),
+    bet float ,
+    reward float,
+    choice char(20),
     foreign key (playerid) references users(id)
 );
 #insert into sessionplayer(gameid,playerid ,timeoccurs,result ,pointbet,pointrc,bet)values();
 
 create table sessiongame (
 	 id int primary key auto_increment,
-     idgame int ,
-     namegame text,
+--      idgame int ,
+     namegame char(40),
      result char(10),
-     timeoccurs datetime ,
-     foreign key (idgame) references listgame(id)
+     timeoccurs char(50) 
+--      foreign key (idgame) references listgame(id)
 );
 #insert into sessiongame(idgame,namegame,result,timeoccurs)values(1,'Đoán số ','L','2024-10-25 01:06:45');
 
 create table atm(
 	idplayer int ,
-    debt float ,
-    deposit float,
+    stk char(40) unique,
     balance float ,
-    borrowed float,
     foreign key (idplayer) references users(id)
 );
 insert into atm values
-(1,0,0,1000,5000),
-(2,0,0,1000,5000),
-(3,0,0,1000,5000),
-(4,0,0,1000,5000);
+(1,0787107821,5000),
+(2,04082004,5000),
+(3,30041975,5000),
+(4,66668888363636,5000);
 
 create table historybalance(
 	id int primary key auto_increment ,

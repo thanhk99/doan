@@ -11,29 +11,22 @@ public class atm {
     @Column(name = "idplayer")
     private Integer idPlayer; 
 
-    @Column(name = "debt")
-    private Float debt;
-
-    @Column(name = "deposit")
-    private Float deposit;
+    @Column(name = "stk")
+    private String stk;
 
     @Column(name = "balance")
     private Float balance;
 
-    @Column(name = "borrowed")
-    private Float borrowed;
 
     @ManyToOne
     @JoinColumn(name = "idplayer", insertable = false, updatable = false)
     private users user; 
 
     public atm() {}
-    public atm(int idPlayer , float debt , float deposit , float balance , float borrowed){
+    public atm(int idPlayer , float balance , String stk){
         this.idPlayer = idPlayer;
-        this.debt = debt;
-        this.deposit = deposit;
         this.balance = balance;
-        this.borrowed = borrowed;
+        this.stk = stk;
     }
     public int getIdPlayer(){
         return idPlayer;
@@ -41,31 +34,16 @@ public class atm {
     public void setIdPlayer(int idPlayer){
         this.idPlayer = idPlayer;
     }
-    public float getDebt(){
-        return debt;
-    }
-    public void setDebt(float debt){
-        this.debt = debt;
-    }
-    public float getDeposit(){
-        return deposit;
-    }
-    public void setDeposit(float deposit){
-        this.deposit = deposit;
-    }
     public float getBalance(){
         return balance;
     }
     public void setBalance(float balance){
         this.balance = balance;
     }
-    public float getBorrowed(){
-        return borrowed;
+    public String getStk(){
+        return stk;
     }
-    public void setBorrowed(float borrowed){
-        this.borrowed = borrowed;
-    }
-    public atm get() {
-        throw new UnsupportedOperationException("Unimplemented method 'get'");
+    public void setStk(String stk){
+        this.stk = stk;
     }   
 }

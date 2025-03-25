@@ -6,7 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import com.example.doan.Model.atm;
 
+
+
+
 @Repository
 public interface atmRepository extends JpaRepository<atm, Integer> {
-    Optional<atm> findByIdPlayer(long idPlayer);
+    Optional<atm> findByStk(String stk);
+    Optional<atm> findByIdPlayer(int idPlayer);
 }

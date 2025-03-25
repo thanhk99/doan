@@ -65,5 +65,10 @@ public class AtmController {
         hisBalanceRepo.save(request);
         return ResponseEntity.ok(request);
     }
+    @PostMapping("/search")
+    public ResponseEntity<?> searchStk(@RequestBody atm entity) {
+        Optional<atm>atm=atmRepository.findByStk(entity.getStk());
+        return ResponseEntity.ok(atm);
+    }
     
 }
