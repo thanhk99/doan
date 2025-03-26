@@ -1,17 +1,15 @@
     package com.example.doan.ws;
 
     import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+    import java.time.LocalDateTime;
+    import java.time.format.DateTimeFormatter;
+    import java.util.ArrayList;
     import java.util.Collections;
     import java.util.HashMap;
     import java.util.List;
-import java.util.Random;
-import java.util.Timer;
+    import java.util.Random;
+    import java.util.Timer;
     import java.util.TimerTask;
-
-    import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.stereotype.Component;
     import org.springframework.web.socket.CloseStatus;
     import org.springframework.web.socket.TextMessage;
@@ -19,13 +17,11 @@ import java.util.Timer;
     import org.springframework.web.socket.WebSocketSession;
     import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-    import com.example.doan.Controller.gameController;
     import com.example.doan.Model.sessionGame;
-import com.example.doan.Model.sessionPlayer;
-import com.example.doan.Repository.sessionGameRepo;
-import com.example.doan.Repository.sessionPlayerRepo;
-import com.fasterxml.jackson.databind.JsonNode;
-    import com.fasterxml.jackson.databind.ObjectMapper;
+    import com.example.doan.Repository.sessionGameRepo;
+    import com.example.doan.Repository.sessionPlayerRepo;
+    import com.fasterxml.jackson.databind.JsonNode;
+        import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
     public class GameCLHandler extends TextWebSocketHandler {
 
@@ -79,8 +75,6 @@ import com.fasterxml.jackson.databind.JsonNode;
             else if(type.equals("bet")){
                 handleChoiceMsg(jsonNode, username);
             }
-
-
         }
 
         private void handleBetMsg(JsonNode jsonNode) throws Exception{
@@ -95,9 +89,17 @@ import com.fasterxml.jackson.databind.JsonNode;
             else{
                 totalMoneyC+=money;
             }
+            System.out.println(MoneyClient.get(username));
+            int tempMoney;
+            if(MoneyClient.get(username)!=null){
+               tempMoney=MoneyClient.get(username)+money;
+            }
+            else{
+                tempMoney=money;
+            }
             GuessClient.put(username, choice);
-            MoneyClient.put(username, money);
-            System.out.println(username+" : " + choice +"->" + money);
+            MoneyClient.put(username, tempMoney);
+            System.out.println(username+" : " + choice +"->" + tempMoney);
         }
         private void sendTotalMoney() throws IOException{
             String totalMoney=totalMoneyC+":"+totalMoneyL;
