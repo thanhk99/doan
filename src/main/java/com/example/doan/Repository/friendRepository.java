@@ -12,6 +12,7 @@ import com.example.doan.Model.users;
 
 public interface friendRepository extends JpaRepository<friend, Integer> {
     friend findByIdMyAndIdFriend(Integer idMy, Integer idFriend);
+    List<friend> findIdFriendByIdMy(int idMy);
     List<friend> findByIdMyAndRelative(Integer idMy, String relative);
     List<friend> findByIdFriendAndRelative(Integer idFriend, String relative);
     // List<friend> findFriendListByUserId(Integer idMy );

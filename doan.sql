@@ -37,7 +37,6 @@ create table sessionplayer(
     choice char(20),
     foreign key (playerid) references users(id)
 );
-#insert into sessionplayer(gameid,playerid ,timeoccurs,result ,pointbet,pointrc,bet)values();
 
 create table sessiongame (
 	 id int primary key auto_increment,
@@ -47,7 +46,6 @@ create table sessiongame (
      timeoccurs char(50) 
 --      foreign key (idgame) references listgame(id)
 );
-#insert into sessiongame(idgame,namegame,result,timeoccurs)values(1,'Đoán số ','L','2024-10-25 01:06:45');
 
 create table atm(
 	idplayer int ,
@@ -56,10 +54,10 @@ create table atm(
     foreign key (idplayer) references users(id)
 );
 insert into atm values
-(1,0787107821,5000),
-(2,04082004,5000),
-(3,30041975,5000),
-(4,66668888363636,5000);
+(1,'0787107821',5000),
+(2,'04082004',5000),
+(3,'30041975',5000),
+(4,'66668888363636',5000);
 
 create table historybalance(
 	id int primary key auto_increment ,
@@ -117,5 +115,15 @@ create table friend(
     id_friend int ,
     relative char(50),
     foreign key (id_my) references users(id),
+    foreign key (id_friend) references users(id)
+);
+create table message(
+	id int primary key auto_increment,
+	id_my int ,
+    id_friend int ,
+    content char(50),
+    timesend char(40),
+    read_status tinyint default 0 ,
+	foreign key (id_my) references users(id),
     foreign key (id_friend) references users(id)
 );

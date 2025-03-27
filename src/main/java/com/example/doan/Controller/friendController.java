@@ -14,6 +14,7 @@ import com.example.doan.Model.users;
 import com.example.doan.Repository.UsersRepository;
 import com.example.doan.Repository.friendRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -114,15 +115,17 @@ public class friendController {
     @PostMapping("/getListFriend")
     public ResponseEntity<?> getListFriend(@RequestBody friend request) {
         Integer idMy = request.getIdMy();
-    
-        if (idMy == null) {
-            return ResponseEntity.badRequest().body("ID người dùng không hợp lệ.");
+        List<friend> listIdFr=new ArrayList<>();
+        List <users> listFriend=new ArrayList<>();
+        listIdFr=friendRepository.findIdFriendByIdMy(idMy);
+        for (friend integer : listIdFr) {
+            Optional <users> u= usersRepository.findIdAndFullnameById(integer.getIdFriend());
+            users user= new users();
+            user.setId(u.get().getId());
+            user.setFullname(u.get().getFullname());
+            listFriend.add(user);
         }
-    
-        // Lấy danh sách bạn bè 2 chiều
-        List<String> friendNames = friendRepository.findFriendNamesById(idMy);
-    
-        return ResponseEntity.ok(friendNames);
+        return ResponseEntity.ok(listFriend);
     }
 
 @PostMapping("/getFriendRequests")

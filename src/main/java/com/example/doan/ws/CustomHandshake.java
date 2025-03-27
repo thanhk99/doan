@@ -22,8 +22,8 @@ public class CustomHandshake extends HttpSessionHandshakeInterceptor {
             String[] params = username.split("&");
             for (String param : params) {
                 String[] keyValue = param.split("=");
-                if (keyValue.length == 2 && "username".equals(keyValue[0])) {
-                    attributes.put("username", keyValue[1]); // Lưu tên người dùng vào attributes
+                if (keyValue.length == 2 && "id".equals(keyValue[0])) {
+                    attributes.put("id", keyValue[1]); // Lưu tên người dùng vào attributes
                 }
             }
         }
