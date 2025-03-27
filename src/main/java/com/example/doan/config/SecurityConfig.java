@@ -21,9 +21,9 @@ public class SecurityConfig  {
                 .authorizeHttpRequests(authozire -> authozire
                                 .requestMatchers("/user/login").permitAll()
                                 .requestMatchers("/game/*").permitAll()
-                                .requestMatchers("/Atm/search").permitAll()
-                                .anyRequest().permitAll()
-                                // .anyRequest().authenticated()
+                                // .requestMatchers("/Atm/search").permitAll()
+                                // .anyRequest().permitAll()
+                                .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtUtil, UsernamePasswordAuthenticationFilter.class);
 
