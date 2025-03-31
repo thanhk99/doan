@@ -24,11 +24,13 @@ public class SecurityConfig  {
                                 .requestMatchers("admin/**").hasRole("ADMIN")
                                 .requestMatchers("/user/login").permitAll()
                                 .requestMatchers("/game/*").permitAll()
-                                .requestMatchers("/Atm/search").permitAll()
+                                // .requestMatchers("/Atm/search").permitAll()
                                 .anyRequest().permitAll()
                                 // .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtUtil, UsernamePasswordAuthenticationFilter.class);
+
+        
 
         return http.build();
     }
