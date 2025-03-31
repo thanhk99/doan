@@ -41,7 +41,7 @@ public class AtmController {
 
                 atm.setBalance(atm.getBalance() + entity.getBalance());
                 atmRepository.save(atm);
-                return ResponseEntity.ok("Đã cập nhật " + entity.getBalance() + " vào tài khoản");
+                return ResponseEntity.ok(entity);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy người chơi với ID: " + entity.getIdPlayer());
             }

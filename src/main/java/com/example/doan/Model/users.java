@@ -11,6 +11,7 @@ public class users {
     private String mk;
     private String fullname;
     private String email;
+    private String role;
     @OneToMany(mappedBy = "playerid")
     private List<sessionPlayer> sessionPlayers;
     public users() {}
@@ -50,5 +51,11 @@ public class users {
     }
     public String getEmail() {
         return email;
+    }
+    public void setRole(String role){
+        this.role = role;
+    }
+    public String getRole() {
+        return role;
     }
 }

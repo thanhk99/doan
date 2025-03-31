@@ -2,10 +2,14 @@ package com.example.doan.Model;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -18,6 +22,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -43,6 +49,16 @@ public class JwtUtil extends OncePerRequestFilter{
             jwt = authorizationHeader.substring(7); // Lấy token
             try {
                 username = Jwts.parser().setSigningKey(apiKey).parseClaimsJws(jwt).getBody().getSubject();
+                List<String> roles = (List<String>) Jwts.parser().setSigningKey(apiKey).parseClaimsJws(jwt).getBody().get("roles");
+                List<GrantedAuthority> authorities = new ArrayList<>();
+                if (roles != null) {
+                    authorities = roles.stream()
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                        .collect(Collectors.toList());
+                }
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (ExpiredJwtException e) {
                 // Xử lý token hết hạn
                 System.out.println("Token expired");
@@ -65,8 +81,9 @@ public class JwtUtil extends OncePerRequestFilter{
          chain.doFilter(request, response);
         
     }
-    public String generateToken(String tk){
+    public String generateToken(String tk,String role){
         Map<String , Object> claims = new HashMap<>();
+        claims.put("roles", Collections.singleton(role));
         return createToken(claims,tk);
     }
     public String createToken(Map<String, Object> claims, String subject) {

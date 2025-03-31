@@ -64,7 +64,7 @@ public class usersController {
             responseBody.put("balance", atmInfo.get().getBalance());
 
             //token
-            String token = jwtUtil.generateToken(user.get().getTk());
+            String token = jwtUtil.generateToken(user.get().getTk(),user.get().getRole());
             responseBody.put("token", token);
             return ResponseEntity.ok(responseBody);
         }
