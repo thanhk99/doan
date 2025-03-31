@@ -28,7 +28,7 @@ public class MessageController {
         List<Message> listMsg= new ArrayList<>();
         int idMy=entity.getIdMy();
         int idFriend=entity.getIdFriend();
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("timeSend").ascending());
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("timeSend").descending());
         listMsg=messageRepo.findByIdMyAndIdFriendOrIdMyAndIdFriend(idMy, idFriend, idFriend, idMy,pageable);
         return ResponseEntity.ok(listMsg);
     }
