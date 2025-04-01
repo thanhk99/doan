@@ -30,15 +30,6 @@ public class AtmController {
             Optional<atm> atmInfo = atmRepository.findByIdPlayer(entity.getIdPlayer());
             if (atmInfo.isPresent()) {
                 atm atm = atmInfo.get();
-                float balance = atm.getBalance();
-                if (balance < 0) {
-                    return ResponseEntity.badRequest().body("Dữ liệu không hợp lệ: idPlayer hoặc balance bị thiếu hoặc không hợp lệ.");
-                }
-    
-                if (atm.getBalance() < entity.getBalance()) {
-                    return ResponseEntity.badRequest().body("Số dư không đủ để thực hiện giao dịch.");
-                }
-
                 atm.setBalance(atm.getBalance() + entity.getBalance());
                 atmRepository.save(atm);
                 return ResponseEntity.ok(entity);

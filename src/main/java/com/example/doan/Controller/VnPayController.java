@@ -32,7 +32,7 @@ public class VnPayController {
 
     // Thông tin cấu hình VnPay
     private final String vnp_TmnCode = "M83OD4C1"; // Terminal ID của bạn
-    private final String vnp_HashSecret = "ORLG8272X8XI8AOMU1UV0ST6G5HIGRUZ"; // Khóa bí mật
+    private final String vnp_HashSecret = "2SGFB47N8WJCSDI9BAWQ602LLGJRE4CC"; // Khóa bí mật
     private final String vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     private final String vnp_Version = "2.1.0";
     private final String vnp_Command = "pay";
