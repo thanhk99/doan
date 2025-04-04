@@ -28,7 +28,7 @@ public interface friendRepository extends JpaRepository<friend, Integer> {
        "WHERE f.relative = 'Xác nhận' " +
        "AND f.idMy = :idMy")
        List<Object[]> findFriendNamesByIdAndRelative(@Param("idMy") Integer idMy);
-   // List<String> findFriendRequestsByReceiverId(Integer idMy);
+      Optional<friend> findRelativeByIdMyAndIdFriend(Integer idMy, Integer idFriend);
 
 
 
