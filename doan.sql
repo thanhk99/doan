@@ -130,3 +130,18 @@
 		foreign key (id_my) references users(id),
 		foreign key (id_friend) references users(id)
 	);
+    
+    create table betHisfbxs(
+		id int primary key auto_increment,
+        idplayer int ,
+        bet_type ENUM('FOOTBALL', 'LOTTERY') NOT NULL,
+		reference_id varchar(255) NOT NULL,  -- id tham chieu (fb, xs)
+		prediction VARCHAR(255), -- du doan
+		bet_amount INT NOT NULL,
+		bet_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- thoi gian cuoc
+		result VARCHAR(255),
+        foreign key (idplayer) references users(id) 
+    );
+    insert into betHisfbxs(idplayer , bet_type , reference_id , prediction , bet_amount , result) value 
+    ('3' , 'FOOTBALL' , '2' , '2-1' , '1000' , 'win')
+   
