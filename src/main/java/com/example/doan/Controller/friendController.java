@@ -14,6 +14,8 @@ import com.example.doan.Model.users;
 import com.example.doan.Repository.UsersRepository;
 import com.example.doan.Repository.friendRepository;
 
+import jakarta.persistence.Entity;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -222,5 +224,14 @@ public ResponseEntity<Map<String, Object>> deleteFriendRequest(@RequestBody frie
 
     return ResponseEntity.badRequest()
             .body(Map.of("message", "Không thể hủy lời mời, trạng thái không hợp lệ.", "status", "error"));
-}
+    }
+
+    @PostMapping("/getRelative")
+    public ResponseEntity<?> getRelativeFr(@RequestBody friend friend) {
+        Optional<friend> f = friendRepository.findRelativeByIdMyAndIdFriend(friend.getIdMy(), friend.getIdFriend());
+        if(f.isPresent()){
+            return ResponseEntity.ok(f.get());
+        }
+        return ResponseEntity.ok(null);
+    }
 }
