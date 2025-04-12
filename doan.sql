@@ -133,15 +133,15 @@
     
     create table betHisfbxs(
 		id int primary key auto_increment,
-        idplayer int ,
+        id_player int ,
         bet_type ENUM('FOOTBALL', 'LOTTERY') NOT NULL,
 		reference_id varchar(255) NOT NULL,  -- id tham chieu (fb, xs)
 		prediction VARCHAR(255), -- du doan
 		bet_amount INT NOT NULL,
 		bet_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- thoi gian cuoc
-		result VARCHAR(255),
-        foreign key (idplayer) references users(id) 
+		multi int,
+        foreign key (id_player) references users(id) ,
+		`status` BIT DEFAULT 0
     );
-    insert into betHisfbxs(idplayer , bet_type , reference_id , prediction , bet_amount , result) value 
-    ('3' , 'FOOTBALL' , '2' , '2-1' , '1000' , 'win')
+
    
