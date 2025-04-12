@@ -8,11 +8,11 @@ public class historyBalance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id ;
-
+    @Column(name = "id_player")
     private int idPlayer;
-    @ManyToOne 
-    @JoinColumn(name = "idPlayer",insertable = false,updatable = false)
-    private users user;
+    // @ManyToOne 
+    // @JoinColumn(name = "idPlayer",insertable = false,updatable = false)
+    // private users user;
     @Column(name = "timechange")
     private String timeChange;
     private String content;

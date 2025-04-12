@@ -38,7 +38,7 @@ public class friendController {
     @PostMapping("/addFriend")
 public ResponseEntity<Map<String, String>> addFriend(@RequestBody friend request) {
     Integer idMy = request.getIdMy();
-    Integer idFriend = request.getIdFriend();
+    Integer idFriend = request.getIdFriend(); 
 
     if (idMy == null || idFriend == null) {
         return ResponseEntity.badRequest().body(Map.of("message", "ID không hợp lệ."));
