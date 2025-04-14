@@ -71,6 +71,8 @@ public ResponseEntity<?> getAll() {
 }
 
 
+
+
     @PostMapping("getbetHisfbxs")
         public ResponseEntity<?> getbetHisfbxs(@RequestBody betHisfbxs request) {
         int idplayer = request.getIdPlayer(); 
@@ -102,57 +104,69 @@ public ResponseEntity<?> getAll() {
     @GetMapping("/settleBets")
     public ResponseEntity<?> settleBets() {
         try {
-            List<betHisfbxs> betsToSettle = betHisfbxsRepo.findByStatusFalseAndBetType(BetType.FOOTBALL); // Lấy danh sách cược chưa xử lý
+            List<betHisfbxs> betsToSettle = betHisfbxsRepo.findByStatusFalseAndBetType(BetType.FOOTBALL);
+            System.out.println("Số cược chưa xử lý: " + betsToSettle.size());
     
-            String apiUrl = "https://api.football-data.org/v4/competitions/PL/matches"; 
+            String apiUrl = "https://api.football-data.org/v4/competitions/PL/matches";  
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-Auth-Token", "17ee52ab7c3d494794f524ea8abff2f8");
     
-            // Gửi yêu cầu GET đến API dùng restTemplate để lấy dữ liệu danh sách trận đấu
-
             ResponseEntity<String> response = new RestTemplate().exchange(
                     apiUrl, HttpMethod.GET, new HttpEntity<>(headers), String.class);
     
-            
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode matches = mapper.readTree(response.getBody()).get("matches"); //Lấy mảng các trận đấu từ khóa "matches" trong JSON.
+            JsonNode matches = mapper.readTree(response.getBody()).get("matches");
+            System.out.println("Số trận từ API: " + matches.size());
     
-            for (betHisfbxs bet : betsToSettle) {  //Duyệt qua từng cược trong database, sau đó duyệt từng trận trong dữ liệu API.
+            for (betHisfbxs bet : betsToSettle) {
+                System.out.println("Đang xử lý cược ID: " + bet.getId() + " - ReferenceId: " + bet.getReferenceId());
+    
+                boolean foundMatch = false;
+    
                 for (JsonNode match : matches) {
                     String matchId = match.get("id").asText();
+                    String homeTeam = match.get("homeTeam").get("name").asText();
+                    String awayTeam = match.get("awayTeam").get("name").asText();
+                    String status = match.get("status").asText();
     
-                    // So sánh đúng trận
                     if (bet.getReferenceId().equals(matchId)) {
+                        foundMatch = true;
     
-                        // Kiểm tra trận đã kết thúc chưa
-                        String matchStatus = match.get("status").asText();
-                        if (!"FINISHED".equals(matchStatus)) {
-                            continue; // bỏ qua nếu chưa kết thúc
+                        System.out.println("Tìm thấy trận tương ứng: " + homeTeam + " vs " + awayTeam + " - Status: " + status);
+    
+                        if (!"FINISHED".equals(status)) {
+                            System.out.println("Trận chưa kết thúc → bỏ qua");
+                            break;
                         }
     
-                        // Trận đã kết thúc thì xử lý kết quả
                         JsonNode scoreNode = match.get("score").get("fullTime");
                         int home = scoreNode.get("home").asInt();
                         int away = scoreNode.get("away").asInt();
-    
                         String actualResult = String.format("%d-%d", home, away);
     
-                        // So sánh full tỉ số
+                        System.out.println("Kết quả trận đấu: " + actualResult + " | Dự đoán của người chơi: " + bet.getPrediction());
+    
                         if (actualResult.equals(bet.getPrediction())) {
                             int reward = bet.getBetAmount() * bet.getMulti();
+                            System.out.println(">> Dự đoán đúng! Trả thưởng: " + reward);
     
                             atmRepository.findByIdPlayer(bet.getIdPlayer()).ifPresent(atm -> {
                                 atm.setBalance(atm.getBalance() + reward);
                                 atmRepository.save(atm);
                             });
+                        } else {
+                            System.out.println(">> Dự đoán sai, không trả thưởng.");
                         }
     
-                        // Sau khi xử lý, cập nhật status = true
                         bet.setStatus(true);
                         betHisfbxsRepo.save(bet);
-    
+                        System.out.println("Đã cập nhật status = true cho cược ID: " + bet.getId());
                         break;
                     }
+                }
+    
+                if (!foundMatch) {
+                    System.out.println("Không tìm thấy trận phù hợp với referenceId: " + bet.getReferenceId());
                 }
             }
     
@@ -162,6 +176,5 @@ public ResponseEntity<?> getAll() {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi xử lý cược.");
         }
     }
-
 
 }
