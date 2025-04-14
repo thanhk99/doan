@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,7 +50,6 @@ public class usersController {
     @PostMapping("/login") // Đăng nhập
     public ResponseEntity<?> login(@Valid @RequestBody users loginRequest,HttpServletResponse response) {
         Optional <users> user = usersRepository.findByTk(loginRequest.getTk());
-        System.out.println(loginRequest.getTk());
         if(user.isPresent() && user.get().getMk().equals(loginRequest.getMk())) {
             Cookie cookieId = new Cookie("id", String.valueOf(user.get().getId()));
             cookieId.setMaxAge(60 * 60 * 24 * 7);

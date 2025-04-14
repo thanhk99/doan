@@ -15,7 +15,7 @@
 	('thanh','1','Hạ Hầu Đôn','downmonkey@gmail.com','user'),
 	('thanh2004','1','Nguyễn Đình Hưng','thanhcute@gmail.com','user'),
 	('admin','admin','Admin','admin@gmail.com','admin');
-
+	update users set id =0 where tk= 'admin';
 
 	create table listgame(
 		id int primary key auto_increment ,
