@@ -14,4 +14,6 @@ public interface betHisfbxsRepo extends JpaRepository<betHisfbxs, Integer> {
     
     List<betHisfbxs> findByBetType(betHisfbxs.BetType betType);
 
+    List<betHisfbxs> findByStatus(Boolean status);
+    List<betHisfbxs> findByStatusFalseAndBetType(betHisfbxs.BetType betType);
 }

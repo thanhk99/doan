@@ -31,7 +31,7 @@
 		id int primary key auto_increment,
 		namegame char(40) ,
 		playerid int ,
-		timeoccurs char(50),
+		timeoccurs datetime,
 		result char(20),
 		bet float ,
 		reward float,
@@ -57,6 +57,7 @@
 		foreign key (idplayer) references users(id)
 	);
 	insert into atm values
+    (0,'1',100000000000),
 	(1,'0787107821',5000),
 	(2,'04082004',5000),
 	(3,'30041975',5000),
@@ -133,15 +134,15 @@
     
     create table betHisfbxs(
 		id int primary key auto_increment,
-        idplayer int ,
+        id_player int ,
         bet_type ENUM('FOOTBALL', 'LOTTERY') NOT NULL,
 		reference_id varchar(255) NOT NULL,  -- id tham chieu (fb, xs)
 		prediction VARCHAR(255), -- du doan
 		bet_amount INT NOT NULL,
 		bet_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- thoi gian cuoc
-		result VARCHAR(255),
-        foreign key (idplayer) references users(id) 
+		multi int,
+        foreign key (id_player) references users(id) ,
+		`status` BIT DEFAULT 0
     );
-    insert into betHisfbxs(idplayer , bet_type , reference_id , prediction , bet_amount , result) value 
-    ('3' , 'FOOTBALL' , '2' , '2-1' , '1000' , 'win')
+
    

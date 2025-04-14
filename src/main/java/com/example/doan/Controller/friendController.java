@@ -2,27 +2,21 @@ package com.example.doan.Controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.doan.Model.friend;
-import com.example.doan.Model.users;
 import com.example.doan.Repository.UsersRepository;
 import com.example.doan.Repository.friendRepository;
 
-import jakarta.persistence.Entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 @RequestMapping("friend")
@@ -38,7 +32,7 @@ public class friendController {
     @PostMapping("/addFriend")
 public ResponseEntity<Map<String, String>> addFriend(@RequestBody friend request) {
     Integer idMy = request.getIdMy();
-    Integer idFriend = request.getIdFriend();
+    Integer idFriend = request.getIdFriend(); 
 
     if (idMy == null || idFriend == null) {
         return ResponseEntity.badRequest().body(Map.of("message", "ID không hợp lệ."));
@@ -122,10 +116,6 @@ public ResponseEntity<Map<String, String>> acceptFriend(@RequestBody friend requ
 @PostMapping("/getListFriend")
 public ResponseEntity<?> getListFriend(@RequestBody friend request) {
     Integer idMy = request.getIdMy();
-
-    if (idMy == null) {
-        return ResponseEntity.badRequest().body("ID người dùng không hợp lệ.");
-    }
 
     // Lấy danh sách bạn bè 2 chiều
     List<Object[]> friendNames = friendRepository.findFriendNamesById(idMy);
