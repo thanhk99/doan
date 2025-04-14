@@ -31,7 +31,7 @@
 		id int primary key auto_increment,
 		namegame char(40) ,
 		playerid int ,
-		timeoccurs char(50),
+		timeoccurs datetime,
 		result char(20),
 		bet float ,
 		reward float,
