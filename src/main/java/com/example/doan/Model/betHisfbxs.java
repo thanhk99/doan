@@ -11,19 +11,19 @@ import java.time.LocalDateTime;
 public class betHisfbxs {
 
 
-    // public String toString() {
-    //     return "betHisfbxs{" +
-    //             "id=" + id +
-    //             ", id_player=" + idPlayer +
-    //             ", bet_type=" + betType +
-    //             ", reference_id='" + referenceId + '\'' +
-    //             ", prediction='" + prediction + '\'' +
-    //             ", bet_amount=" + betAmount +
-    //             ", bet_time=" + betTime +
-    //             ", multi=" + multi +
-    //             ", status=" + status +
-    //             '}';
-    // }
+    public String toString() {
+        return "betHisfbxs{" +
+                "id=" + id +
+                ", id_player=" + idPlayer +
+                ", bet_type=" + betType +
+                ", reference_id='" + referenceId + '\'' +
+                ", prediction='" + prediction + '\'' +
+                ", bet_amount=" + betAmount +
+                ", bet_time=" + betTime +
+                ", multi=" + multi +
+                ", status=" + status +
+                '}';
+    }
 
     public enum BetType {
         FOOTBALL,
@@ -34,7 +34,7 @@ public class betHisfbxs {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "id_player")
+    @Column(name = "idplayer")
     private int idPlayer;
 
     @Enumerated(EnumType.STRING)

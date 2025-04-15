@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface betHisfbxsRepo extends JpaRepository<betHisfbxs, Integer> {
 
-    @Query(value = "SELECT * FROM betHisfbxs WHERE id_player = :idPlayer", nativeQuery = true)
+    @Query(value = "SELECT * FROM betHisfbxs WHERE idplayer = :idPlayer", nativeQuery = true)
     List<betHisfbxs> findByIdPlayer(@Param("idPlayer") int idPlayer);
     
     List<betHisfbxs> findByBetType(betHisfbxs.BetType betType);

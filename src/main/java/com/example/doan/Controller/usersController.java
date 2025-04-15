@@ -9,15 +9,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.doan.Model.users;
+import com.example.doan.Repository.HisBalanceRepo;
+import com.example.doan.Repository.MessageRepo;
 import com.example.doan.Model.JwtUtil;
 import com.example.doan.Model.atm;
 import com.example.doan.Repository.UsersRepository;
 import com.example.doan.Repository.atmRepository;
-
+import com.example.doan.Repository.betHisfbxsRepo;
+import com.example.doan.Repository.friendRepository;
+import com.example.doan.Repository.sessionPlayerRepo;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,15 +31,26 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid; 
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("user")
 public class usersController {
     HttpServletRequest request;
-    public usersController(){}
+   
+    @Autowired
+    private MessageRepo MessageRepo;
+    @Autowired
+    private betHisfbxsRepo betHisfbxsRepo;
+    @Autowired
+    private friendRepository friendRepository;
     @Autowired
     private UsersRepository usersRepository;
+    @Autowired
+    private HisBalanceRepo hisBalanceRepo;
+    @Autowired
+    private sessionPlayerRepo sessionPlayerRepo;
+
     @Autowired
     private atmRepository atmRepository;
     private static String fullname = "";
@@ -106,4 +122,11 @@ public class usersController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy");
         }
     }
+
+   
 }
+
+    
+    
+    
+

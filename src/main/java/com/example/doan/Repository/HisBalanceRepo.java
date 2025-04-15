@@ -14,8 +14,7 @@ public interface HisBalanceRepo extends JpaRepository<historyBalance,Integer> {
     @Query(value = "SELECT id_player, timechange, content, trans, balance " +
     "FROM historybalance " +
     "WHERE id_player = :idPlayer " +
-    "ORDER BY timechange DESC " +
-    "LIMIT 4", nativeQuery = true)
+    "ORDER BY timechange DESC " ,nativeQuery = true)
     List<Object[]> findTop5ByIdPlayer(@Param("idPlayer") int idPlayer);
 
 }
