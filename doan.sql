@@ -15,7 +15,7 @@
 	('thanh','1','Hạ Hầu Đôn','downmonkey@gmail.com','user'),
 	('thanh2004','1','Nguyễn Đình Hưng','thanhcute@gmail.com','user'),
 	('admin','admin','Admin','admin@gmail.com','admin');
-
+	update users set id =0 where tk= 'admin';
 
 	create table listgame(
 		id int primary key auto_increment ,
@@ -57,6 +57,7 @@
 		foreign key (idplayer) references users(id)
 	);
 	insert into atm values
+    (0,'1',100000000000),
 	(1,'0787107821',5000),
 	(2,'04082004',5000),
 	(3,'30041975',5000),
