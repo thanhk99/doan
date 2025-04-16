@@ -15,8 +15,7 @@ public interface sessionPlayerRepo extends JpaRepository<sessionPlayer, Integer>
     @Query(value = "SELECT id, namegame, playerid, timeoccurs, result, bet, reward, choice " +
             "FROM sessionplayer " +
             "WHERE playerid = :idPlayer " +
-            "ORDER BY timeoccurs DESC " +
-            "LIMIT 5", nativeQuery = true)
+            "ORDER BY timeoccurs DESC ", nativeQuery = true)
     List<sessionPlayer> findTop5ByIdPlayer(@Param("idPlayer") int idPlayer);
 
 }

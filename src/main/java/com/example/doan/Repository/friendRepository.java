@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.example.doan.Model.friend;
-import com.example.doan.Model.users;
 
 public interface friendRepository extends JpaRepository<friend, Integer> {
     friend findByIdMyAndIdFriend(Integer idMy, Integer idFriend);

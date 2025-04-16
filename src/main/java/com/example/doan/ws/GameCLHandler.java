@@ -47,9 +47,9 @@
         @Override 
         public void afterConnectionEstablished( WebSocketSession session) throws Exception {
             sessions.add(session);
-            String username = (String) session.getAttributes().get("username");
+            String idUser = (String) session.getAttributes().get("id");
             session.sendMessage(new TextMessage(Integer.toString(countdown)));
-            System.out.println("User Chan le connected: " + username );
+            System.out.println("User Chan le connected: " + idUser );
             if (!isStart){
                 startCountdown();
                 isStart = true;
@@ -58,11 +58,11 @@
         @Override
         public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
             sessions.remove(session);
-            System.out.println("Client disconnected: " + (String)session.getAttributes().get("username"));
+            System.out.println("Client disconnected: " + (String)session.getAttributes().get("id"));
         }
         @Override
         public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-            String username = (String) session.getAttributes().get("username");
+            String idUser = (String) session.getAttributes().get("id");
             String msg = (String) message.getPayload();
             
             ObjectMapper objectMapper = new ObjectMapper();
@@ -73,14 +73,14 @@
                 handleBetMsg(jsonNode);
             }
             else if(type.equals("bet")){
-                handleChoiceMsg(jsonNode, username);
+                handleChoiceMsg(jsonNode, idUser);
             }
         }
 
         private void handleBetMsg(JsonNode jsonNode) throws Exception{
 
         }
-        private void handleChoiceMsg(JsonNode jsonNode,String username) throws Exception{
+        private void handleChoiceMsg(JsonNode jsonNode,String idUser) throws Exception{
             String choice =jsonNode.get("choice").asText();
             int money = jsonNode.get("money").asInt();
             if(choice.equals("cuoc_le")){
@@ -89,17 +89,17 @@
             else{
                 totalMoneyC+=money;
             }
-            System.out.println(MoneyClient.get(username));
+            System.out.println(MoneyClient.get(idUser));
             int tempMoney;
-            if(MoneyClient.get(username)!=null){
-               tempMoney=MoneyClient.get(username)+money;
+            if(MoneyClient.get(idUser)!=null){
+               tempMoney=MoneyClient.get(idUser)+money;
             }
             else{
                 tempMoney=money;
             }
-            GuessClient.put(username, choice);
-            MoneyClient.put(username, tempMoney);
-            System.out.println(username+" : " + choice +"->" + tempMoney);
+            GuessClient.put(idUser, choice);
+            MoneyClient.put(idUser, tempMoney);
+            System.out.println(idUser+" : " + choice +"->" + tempMoney);
         }
         private void sendTotalMoney() throws IOException{
             String totalMoney=totalMoneyC+":"+totalMoneyL;
@@ -115,6 +115,7 @@
         }
         private void startCountdown() throws IOException {
             GuessClient.clear();
+            MoneyClient.clear();
             totalMoneyC =0;
             totalMoneyL=0;
             timer = new Timer();
@@ -180,7 +181,7 @@
                 result="cuoc_le";
             }
             for (WebSocketSession i:sessions){
-                String clientId = (String) i.getAttributes().get("username");
+                String clientId = (String) i.getAttributes().get("id");
                 if (GuessClient.get(clientId) !=null){
                     ObjectMapper objectMapper = new ObjectMapper();
                     HashMap<String, Object> rsMsg = new HashMap<>();

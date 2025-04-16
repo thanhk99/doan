@@ -34,7 +34,7 @@ public class betHisfbxs {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "id_player")
+    @Column(name = "idplayer")
     private int idPlayer;
 
     @Enumerated(EnumType.STRING)
