@@ -43,14 +43,14 @@ public class AdminController {
 
     @Autowired
     private atmRepository atmRepository;
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/hello")
-
     public ResponseEntity<?> Home(@RequestBody users body){
         System.out.println(body.getTk());
         return ResponseEntity.ok(body);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
      @PostMapping("/allUsers")
     public ResponseEntity<?> getFullUsers (@RequestBody users request) {
         List<users> users = usersRepository.findAllUsers();

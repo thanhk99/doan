@@ -14,7 +14,9 @@
 	('thanhcute','1','Nguyễn Văn Thiệu','thieucho@gmail.com','user'),
 	('thanh','1','Hạ Hầu Đôn','downmonkey@gmail.com','user'),
 	('thanh2004','1','Nguyễn Đình Hưng','thanhcute@gmail.com','user'),
-	('admin','admin','Admin','admin@gmail.com','admin');
+    ('thanh2006','1','Nguyễn Đình h','thanhcute1@gmail.com','user'),
+    ('thanh2005','1','Nguyễn Đình c','thanhcute2@gmail.com','user'),
+	('admin','admin','Admin','admin@gmail.com','ADMIN');
 	update users set id =0 where tk= 'admin';
 
 	create table listgame(
@@ -134,14 +136,14 @@
     
     create table betHisfbxs(
 		id int primary key auto_increment,
-        idplayer int ,
+        id_player int ,
         bet_type ENUM('FOOTBALL', 'LOTTERY') NOT NULL,
 		reference_id varchar(255) NOT NULL,  -- id tham chieu (fb, xs)
 		prediction VARCHAR(255), -- du doan
 		bet_amount INT NOT NULL,
 		bet_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- thoi gian cuoc
 		multi int,
-        foreign key (idplayer) references users(id) ,
+        foreign key (id_player) references users(id) ,
 		`status` BIT DEFAULT 0
     );
 

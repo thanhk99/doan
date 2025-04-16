@@ -14,3 +14,4 @@ public interface atmRepository extends JpaRepository<atm, Integer> {
     Optional<atm> findByStk(String stk);
     Optional<atm> findByIdPlayer(int idPlayer);
 }
+ 
