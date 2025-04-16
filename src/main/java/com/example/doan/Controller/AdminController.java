@@ -43,7 +43,7 @@ public class AdminController {
 
     @Autowired
     private atmRepository atmRepository;
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/hello")
 
     public ResponseEntity<?> Home(@RequestBody users body){

@@ -53,7 +53,7 @@ public class JwtUtil extends OncePerRequestFilter{
                 List<GrantedAuthority> authorities = new ArrayList<>();
                 if (roles != null) {
                     authorities = roles.stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + roles))
                         .collect(Collectors.toList());
                 }
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
@@ -66,7 +66,7 @@ public class JwtUtil extends OncePerRequestFilter{
                 // Xử lý token không hợp lệ
                 System.out.println("Invalid token");
             }
-        }
+        }   
        
         //Nếu token hợp lệ, xác thực người dùng
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
