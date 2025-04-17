@@ -22,4 +22,7 @@ public interface atmRepository extends JpaRepository<atm, Integer> {
     @Transactional
     @Query("DELETE FROM atm a WHERE a.idPlayer = :id")
     void deleteByAtmId(@Param("id") int id);
+
+    @Query("SELECT a FROM atm a WHERE a.user.id = :userId")
+    Optional<atm> findByUserId(@Param("userId") Integer userId);
 }

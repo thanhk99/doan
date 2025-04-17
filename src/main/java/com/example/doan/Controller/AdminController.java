@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.doan.Model.atm;
 import com.example.doan.Model.users;
 import com.example.doan.Repository.HisBalanceRepo;
 import com.example.doan.Repository.MessageRepo;
@@ -62,7 +63,7 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/update")
+    @PostMapping("/update") // Chinh sua ten va email
     public ResponseEntity<?> updateUser(@RequestBody users request) {
         Optional<users> userOpt = usersRepository.findById(request.getId());
         if (userOpt.isPresent()) {
@@ -75,6 +76,39 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy user ID: " + request.getId());
         }
     }
+
+    @PostMapping("/updateTkMK")
+    public ResponseEntity<?> updateTkMK(@RequestBody users request) {
+        Optional<users> userOpt = usersRepository.findById(request.getId());
+        if (userOpt.isPresent()) {
+            users user = userOpt.get();
+            user.setTk(request.getTk());
+            user.setMk(request.getMk());
+            users updatedUser = usersRepository.save(user);
+            return ResponseEntity.ok(updatedUser); // ✅ Trả về bản ghi vừa lưu
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy user ID: " + request.getId());
+        }
+    }
+
+    @PostMapping("/updateBalan") // sửa số dư của người dùng
+    public ResponseEntity<?> updateBalan(@RequestBody atm entity) {
+        try {
+            Optional<atm> atmInfo = atmRepository.findByIdPlayer(entity.getIdPlayer());
+            if (atmInfo.isPresent()) {
+                atm atm = atmInfo.get();
+                atm.setBalance(entity.getBalance()); // Cập nhật số dư mới
+                atmRepository.save(atm);
+                return ResponseEntity.ok(entity);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy người chơi với ID: " + entity.getIdPlayer());
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lỗi xử lý yêu cầu: " + e.getMessage());
+        }
+    }
+
+    
 
     @DeleteMapping("/delete")
     public ResponseEntity<Map<String, String>> deleteUser(@RequestBody users request) {
