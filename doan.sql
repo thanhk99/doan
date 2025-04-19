@@ -5,8 +5,8 @@
 		id int primary key auto_increment ,
 		tk char(40),
 		mk char(40),
-		fullname text,
-		email text,
+		fullname char(50),
+		email char(50),
         role char(10)
 	);
 	insert into users(tk,mk,fullname,email,role) values 
@@ -146,5 +146,6 @@
         foreign key (idplayer) references users(id) ,
 		`status` BIT DEFAULT 0
     );
+
 
    
