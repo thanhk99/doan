@@ -18,7 +18,7 @@ RUN mvn clean package -DskipTests
 RUN mv target/doan-0.0.1-SNAPSHOT.jar app.jar
 
 # Mở cổng mà ứng dụng sẽ chạy
-EXPOSE 8080
+EXPOSE 8082
 
 # Lệnh chạy ứng dụng với --enable-preview
 ENTRYPOINT ["java", "--enable-preview", "-jar", "app.jar"]
