@@ -1,6 +1,8 @@
 package com.example.doan.Repository;
 
+import java.lang.classfile.ClassFile.Option;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -25,5 +27,7 @@ public interface HisBalanceRepo extends JpaRepository<historyBalance, Integer> {
     @Transactional
     @Query("DELETE FROM historyBalance h WHERE h.idPlayer = :userId")
     void deleteAllByUser(@Param("userId") int userId);
+
+    
 
 }

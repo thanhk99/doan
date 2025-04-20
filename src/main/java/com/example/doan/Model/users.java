@@ -22,6 +22,14 @@ public class users {
         this.fullname = fullname;
         this.email = email;
     }
+    public users( String tk, String mk, String fullname, String email, String role){
+       
+        this.tk = tk;
+        this.mk = mk;
+        this.fullname = fullname;
+        this.email = email;
+        this.role = role;
+    }
     public int getId() {
         return id;
     }
