@@ -5,6 +5,7 @@ import com.example.doan.Model.sessionPlayer;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -25,5 +26,66 @@ public interface sessionPlayerRepo extends JpaRepository<sessionPlayer, Integer>
     @Transactional
     @Query("DELETE FROM sessionPlayer sp WHERE sp.playerid = :id")
     void deleteByPlayerId(@Param("id") int id);
+
+    @Query(value = """
+            SELECT SUM(h.bet)
+            FROM sessionPlayer h
+            WHERE h.playerid = :idPlayer
+              AND (
+                    (h.namegame = 'Reng Reng' AND h.result = 'Win')
+                    OR
+                    (h.namegame = 'Chẵn lẻ' AND (
+                        (MOD(h.result, 2) = 0 AND h.choice = 'cuoc_chan') OR
+                        (MOD(h.result, 2) = 1 AND h.choice = 'cuoc_le')
+                    ))
+                  )
+            """, nativeQuery = true)
+    Integer sumBetWinAllGame(@Param("idPlayer") Integer idPlayer);
+
+    @Query(value = """
+    SELECT SUM(h.bet)
+    FROM sessionPlayer h
+    WHERE h.playerid = :idPlayer
+      AND (
+            (h.namegame = 'Reng Reng' AND h.result = 'Thua')
+            OR
+            (h.namegame = 'Chẵn lẻ' AND (
+                (MOD(h.result, 2) = 1 AND h.choice = 'cuoc_chan') OR
+                (MOD(h.result, 2) = 0 AND h.choice = 'cuoc_le')
+            ))
+          )
+    """, nativeQuery = true)
+Integer sumBetLostAllGame(@Param("idPlayer") Integer idPlayer);
+
+
+    @Query("SELECT SUM(h.bet) FROM sessionPlayer h WHERE h.playerid = :idPlayer AND h.result = 'Thua' AND h.namegame = 'Reng Reng'")
+    Integer sumRengLost(@Param("idPlayer") Integer idPlayer);
+
+    @Query("SELECT SUM(h.bet) FROM sessionPlayer h WHERE h.playerid = :idPlayer AND h.result = 'Win' AND h.namegame = 'Reng Reng'")
+    Integer sumRengWin(@Param("idPlayer") Integer idPlayer);
+
+    @Query(value = """
+            SELECT SUM(h.bet)
+            FROM sessionPlayer h
+            WHERE h.playerid = :idPlayer
+              AND h.namegame = 'Chẵn lẻ'
+              AND (
+                    (MOD(h.result, 2) = 1 AND h.choice = 'cuoc_chan') OR
+                    (MOD(h.result, 2) = 0 AND h.choice = 'cuoc_le')
+                  )
+            """, nativeQuery = true)
+    Integer sumClLose(@Param("idPlayer") Integer idPlayer);
+
+    @Query(value = """
+            SELECT SUM(h.bet)
+            FROM sessionPlayer h
+            WHERE h.playerid = :idPlayer
+              AND h.namegame = 'Chẵn lẻ'
+              AND (
+                    (MOD(h.result, 2) = 1 AND h.choice = 'cuoc_le') OR
+                    (MOD(h.result, 2) = 0 AND h.choice = 'cuoc_chan')
+                  )
+            """, nativeQuery = true)
+    Integer sumClWin(@Param("idPlayer") Integer idPlayer);
 
 }

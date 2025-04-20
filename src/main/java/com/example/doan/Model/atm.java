@@ -28,6 +28,7 @@ public class atm {
         this.balance = balance;
         this.stk = stk;
     }
+    
     public int getIdPlayer(){
         return idPlayer;
     }
