@@ -10,7 +10,9 @@
     import java.util.Random;
     import java.util.Timer;
     import java.util.TimerTask;
-    import org.springframework.stereotype.Component;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
     import org.springframework.web.socket.CloseStatus;
     import org.springframework.web.socket.TextMessage;
     import org.springframework.web.socket.WebSocketMessage;
@@ -38,8 +40,8 @@
         private Timer timer;
         private boolean isRecived = true;
         private boolean isStart = false;
-        private int totalMoneyC=0;
-        private int totalMoneyL=0;
+        private int totalMoneyT=0;
+        private int totalMoneyX=0;
         private HashMap<String ,String > GuessClient= new HashMap<>();
         private HashMap<String ,Integer > MoneyClient= new HashMap<>();
 
@@ -47,8 +49,20 @@
         @Override 
         public void afterConnectionEstablished( WebSocketSession session) throws Exception {
             sessions.add(session);
-            String idUser = (String) session.getAttributes().get("id");
             session.sendMessage(new TextMessage(Integer.toString(countdown)));
+            String idUser = (String) session.getAttributes().get("id");
+            String guess = "";int money = 0;
+            if(GuessClient.get(idUser.toString())!=null){
+                guess=GuessClient.get(idUser.toString());
+                money=MoneyClient.get(idUser.toString());
+            }
+            ObjectMapper objectMapper = new ObjectMapper();
+            HashMap<Object,Object> result= new HashMap<>();
+            result.put("type", "infobet");
+            result.put("money",money );
+            result.put("guess",guess );
+            String jsonMessage = objectMapper.writeValueAsString(result);
+            session.sendMessage(new TextMessage(jsonMessage));
             System.out.println("User Chan le connected: " + idUser );
             if (!isStart){
                 startCountdown();
@@ -83,11 +97,11 @@
         private void handleChoiceMsg(JsonNode jsonNode,String idUser) throws Exception{
             String choice =jsonNode.get("choice").asText();
             int money = jsonNode.get("money").asInt();
-            if(choice.equals("cuoc_le")){
-                totalMoneyL+=money;
+            if(choice.equals("tai")){
+                totalMoneyX+=money;
             }
             else{
-                totalMoneyC+=money;
+                totalMoneyT+=money;
             }
             System.out.println(MoneyClient.get(idUser));
             int tempMoney;
@@ -101,8 +115,8 @@
             MoneyClient.put(idUser, tempMoney);
             System.out.println(idUser+" : " + choice +"->" + tempMoney);
         }
-        private void sendTotalMoney() throws IOException{
-            String totalMoney=totalMoneyC+":"+totalMoneyL;
+        private void sendTotalMoney(int timeCountdown) throws IOException{
+            String totalMoney=timeCountdown + ":" +totalMoneyT+":"+totalMoneyX;
             convertToJson("money", totalMoney);
         }
         private void convertToJson(String type,String message) throws IOException{
@@ -114,10 +128,11 @@
             sendMessageToAll(jsonResult);
         }
         private void startCountdown() throws IOException {
+            
             GuessClient.clear();
             MoneyClient.clear();
-            totalMoneyC =0;
-            totalMoneyL=0;
+            totalMoneyT =0;
+            totalMoneyX=0;
             timer = new Timer();
             isRecived =true;
             convertToJson("start","");
@@ -126,7 +141,7 @@
                 public void run() {
                     if (countdown >= 0) {
                         try {
-                            sendTotalMoney();
+                            sendTotalMoney(countdown);
                         } catch (IOException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -161,24 +176,34 @@
         }
         public void ShowRs() throws IOException{
             Random random = new Random();
-            int resultInt = random.nextInt(1,6);
+            int dice1 = random.nextInt(1,7);
+            int dice2 = random.nextInt(1,7);
+            int dice3 = random.nextInt(1,7);
+            int sum= dice1+dice2+dice3;
+            List<Integer> resultInt= new ArrayList<>();
+            resultInt.add(dice1);
+            resultInt.add(dice2);
+            resultInt.add(dice3);
+            String resultString = resultInt.stream()
+                                .map(String::valueOf)
+                                .collect(Collectors.joining(", "));
             sessionGame sessionGame = new sessionGame();
             LocalDateTime currentDateTime = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String formattedDateTime = currentDateTime.format(formatter);
-            sessionGame.setResult(Integer.toString(resultInt));
+            sessionGame.setResult(resultString);
             sessionGame.setTimeoccurs(formattedDateTime);
-            sessionGame.setNamegame("Chẵn lẻ");
+            sessionGame.setNamegame("Tài xỉu");
 
             sessionGameRepo.save(sessionGame);
             String result= "";
-            if(resultInt%2==0){
-                convertToJson("end", Integer.toString(resultInt));
-                result ="cuoc_chan";
+            if(sum >10){
+                convertToJson("end",resultString);
+                result ="tai";
             }
             else{
-                convertToJson("end", Integer.toString(resultInt));
-                result="cuoc_le";
+                convertToJson("end",resultString);
+                result="xiu";
             }
             for (WebSocketSession i:sessions){
                 String clientId = (String) i.getAttributes().get("id");

@@ -45,16 +45,10 @@ public class AdminController {
     @Autowired
     private atmRepository atmRepository;
 
-    // @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/hello")
-    public ResponseEntity<?> Home(@RequestBody users body) {
-        System.out.println(body.getTk());
-        return ResponseEntity.ok(body);
-    }
 
-    // @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/allUsers")
-    public ResponseEntity<?> getFullUsers(@RequestBody users request) {
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/allUsers")
+    public ResponseEntity<?> getFullUsers() {
         List<users> users = usersRepository.findAllUsers();
         if (!users.isEmpty()) {
             return ResponseEntity.ok(users);
@@ -123,7 +117,7 @@ public class AdminController {
 
         try {
             // Xoá dữ liệu phụ (nếu có)
-            betHisfbxsRepo.deleteByBetHisfbxsId(userId);
+            // betHisfbxsRepo.deleteByBetHisfbxsUserId(userId);
             MessageRepo.deleteAllMessagesByUser(userId);
             sessionPlayerRepo.deleteByPlayerId(userId);
             atmRepository.deleteByAtmId(userId);
