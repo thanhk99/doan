@@ -5,6 +5,8 @@ import jakarta.persistence.criteria.CriteriaBuilder.In;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+
 @Entity
 @Table(name = "betHisfbxs")
 @Access(AccessType.FIELD)
@@ -57,6 +59,11 @@ public class betHisfbxs {
 
     @Column(name = "status", columnDefinition = "BIT DEFAULT 0")
     private Boolean status = false;
+
+    // Đánh dấu trường này là transient (không ánh xạ vào database)
+    // @Transient 
+    // private Boolean winning;
+
 
     public betHisfbxs() {}
 
@@ -134,4 +141,13 @@ public class betHisfbxs {
     public void setStatus(Boolean status) {
         this.status = status;
     }
+    // @JsonGetter("winning")
+    // public Boolean getWinning() {
+    //     return winning;
+    // }
+
+    // public void setWinning(Boolean winning) {
+    //     this.winning = winning;
+    // }
+
 }
